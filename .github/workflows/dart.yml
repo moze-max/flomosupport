@@ -1,60 +1,159 @@
-name: Flutter CI/CD for Android & Windows
+# name: Flutter CI/CD for Android & Windows
+
+# on:
+#   push:
+#     branches: [ main, master ]
+#     tags: [ 'v*' ]
+#   pull_request:
+#     branches: [ main, master ]
+
+# jobs:
+#   build:
+#     name: Build & Test on ${{ matrix.os }}
+#     runs-on: ${{ matrix.os }}
+
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest]
+#         include:
+#           - os: ubuntu-latest
+#             task: android
+#           - os: windows-latest
+#             task: windows
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
+
+#     - name: Set up Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         channel: stable
+#         flutter-version-file: pubspec.yaml
+
+#     - name: Install dependencies
+#       run: flutter pub get
+
+#     - name: Run tests
+#       run: flutter test
+
+#     - name: Build artifacts
+#       run: |
+#         if [ "${{ matrix.task }}" == "android" ]; then
+#           flutter build apk --release
+#         elif [ "${{ matrix.task }}" == "windows" ]; then
+#           flutter build windows --release
+#         fi
+
+#     - name: Upload APK (for Android)
+#       if: matrix.task == 'android'
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: android-release-apk
+#         path: build/app/outputs/flutter-apk/app-release.apk
+
+#     - name: Upload Windows executable (for Windows)
+#       if: matrix.task == 'windows'
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: windows-release-executable
+#         path: build/windows/runner/Release/
+
+name: Flutter Android CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, dev ]
     tags: [ 'v*' ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, dev ]
+
+env:
+  BUILD_TYPE: release
+  KEYSTORE_PATH: android/app/key.jks
 
 jobs:
-  build:
-    name: Build & Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            task: android
-          - os: windows-latest
-            task: windows
-
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整提交历史[4](@ref)
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        channel: stable
-        flutter-version-file: pubspec.yaml
+      - name: Setup Java (JDK 17)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'  # 适配最新Android构建需求[2,6](@ref)
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: pubspec.yaml
+          channel: 'stable'
 
-    - name: Run tests
-      run: flutter test
+      - name: Restore pub cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            build/
+          key: ${{ runner.os }}-pub-${{ hashFiles('​**​/pubspec.lock') }}
 
-    - name: Build artifacts
-      run: |
-        if [ "${{ matrix.task }}" == "android" ]; then
-          flutter build apk --release
-        elif [ "${{ matrix.task }}" == "windows" ]; then
-          flutter build windows --release
-        fi
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Upload APK (for Android)
-      if: matrix.task == 'android'
-      uses: actions/upload-artifact@v3
-      with:
-        name: android-release-apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Run tests
+        run: flutter test --coverage
 
-    - name: Upload Windows executable (for Windows)
-      if: matrix.task == 'windows'
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-release-executable
-        path: build/windows/runner/Release/
+      - name: Code Linting
+        run: dart analyze --fatal-infos
+
+  build-apk:
+    name: Build Signed APK
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Decode Keystore
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        run: echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 -d > $KEYSTORE_PATH
+
+      - name: Build APK
+        run: |
+          flutter build apk \
+            --$BUILD_TYPE \
+            --split-per-abi \
+            --dart-define=APP_VERSION=${{ github.ref_name }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apks
+          path: |
+            build/app/outputs/apk/$BUILD_TYPE/*.apk
+            coverage/lcov.info
+          retention-days: 30
+
+  release:
+    name: Create GitHub Release
+    needs: build-apk
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: android-apks
+
+      - name: Generate Release Notes
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          artifacts: "*.apk"
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
