@@ -1,4 +1,4 @@
-name: Flutter CI/CD
+name: Flutter CI/CD for Android & Windows
 
 on:
   push:
@@ -9,20 +9,52 @@ on:
 
 jobs:
   build:
-    name: Build & Test
-    runs-on: ubuntu-latest
-    
+    name: Build & Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            task: android
+          - os: windows-latest
+            task: windows
+
     steps:
-    - name: Clone repository
+    - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.7.2'
-        channel: 'stable'
+        flutter-version: '3.7.2' # 根据需要调整Flutter版本
+        channel: stable
 
+    - name: Install dependencies
+      run: flutter pub get
 
-    - run: flutter pub get
-    - run: flutter test
-    - run: flutter build apk
-    - run: flutter build appbundle
+    - name: Run tests
+      run: flutter test
+
+    - name: Build artifacts
+      run: |
+        if [ "${{ matrix.task }}" == "android" ]; then
+          flutter build apk --release
+        elif [ "${{ matrix.task }}" == "windows" ]; then
+          flutter build windows --release
+        fi
+
+    - name: Upload APK (for Android)
+      if: matrix.task == 'android'
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+
+    - name: Upload Windows executable (for Windows)
+      if: matrix.task == 'windows'
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-release-executable
+        path: build/windows/runner/Release/
