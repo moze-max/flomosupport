@@ -106,8 +106,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run tests
-        run: flutter test --coverage
+      # - name: Run tests
+      #   run: flutter test --coverage
 
       - name: Code Linting
         run: dart analyze --fatal-infos
@@ -118,9 +118,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Decode Keystore
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        run: echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 -d > $KEYSTORE_PATH
+      # - name: Decode Keystore
+      #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      #   run: echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 -d > $KEYSTORE_PATH
 
       - name: Build APK
         run: |

@@ -5,10 +5,10 @@ import 'guide.dart';
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<Homepage> {
+class HomePageState extends State<Homepage> {
   int currentindex = 0;
   final List<Widget> _pages = [Guide(), Article()];
 
@@ -35,7 +35,6 @@ class _HomePageState extends State<Homepage> {
               label: 'wirting guide',
               tooltip: '',
             ),
-
             BottomNavigationBarItem(
               icon: Icon(Icons.article_outlined),
               label: 'Article',
