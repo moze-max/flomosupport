@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "appTitle": "Flomo Support",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "homePageTitle": "Homepage",
+  "articlePageTitle": "Articles",
+  "guidePageTitle": "Guides",
+  "aboutPageTitle": "About Us",
+  "notificationPageTitle": "Notifications",
+  "helloMessage": "Hello, {userName}!",
+  "@helloMessage": {
+    "placeholders": {
+      "userName": {}
+    }
+  },
+  "welcomeButton": "Welcome"
+}

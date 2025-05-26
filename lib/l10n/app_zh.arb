@@ -1,0 +1,11 @@
+{
+  "@@locale": "zh",
+  "appTitle": "浮墨支持",
+  "homePageTitle": "首页",
+  "articlePageTitle": "文章",
+  "guidePageTitle": "指南",
+  "aboutPageTitle": "关于我们",
+  "notificationPageTitle": "通知",
+  "helloMessage": "你好，{userName}！",
+  "welcomeButton": "欢迎"
+}
