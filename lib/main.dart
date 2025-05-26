@@ -2,7 +2,6 @@ import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/about.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/pages/notification.dart' as ntfic;
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'pages/article.dart';
@@ -27,17 +26,7 @@ class MyApp extends StatelessWidget {
       },
       // title: 'Flomo Support',
       title: AppLocalizations.of(context)?.appTitle,
-      // localizationsDelegates: [
-      //   // 本地化的代理类
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // supportedLocales: [
-      //   const Locale('en', 'US'), // 美国英语
-      //   const Locale('zh', 'CN'), // 中文简体
-      //   //其他Locales
-      // ],
+
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(

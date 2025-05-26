@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'article.dart';
 import 'guide.dart';
 
@@ -23,6 +24,7 @@ class HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: IndexedStack(index: currentindex, children: _pages),
       bottomNavigationBar: Theme(
@@ -31,17 +33,18 @@ class HomePageState extends State<Homepage> {
           currentIndex: currentindex,
           selectedFontSize: 14,
           unselectedFontSize: 14,
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               key: Key('writing_guide_tab'),
               icon: Icon(Icons.auto_awesome_motion),
-              label: 'writing guide',
+              // label: 'writing guide',
+              label: appLocalizations.bottomNavGuide,
               tooltip: '',
             ),
             BottomNavigationBarItem(
               key: Key("article_tab"),
               icon: Icon(Icons.article_outlined),
-              label: 'Article',
+              label: appLocalizations.articlePageTitle,
               tooltip: '',
             ),
           ],

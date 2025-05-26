@@ -1,11 +1,19 @@
 {
   "@@locale": "zh",
   "appTitle": "浮墨支持",
+  "@appTitle": {
+    "description": "App的标题"
+  },
   "homePageTitle": "首页",
+  "@homePageTitle":{
+    "description": "首页标题的名字"
+  },
   "articlePageTitle": "文章",
   "guidePageTitle": "指南",
   "aboutPageTitle": "关于我们",
   "notificationPageTitle": "通知",
   "helloMessage": "你好，{userName}！",
-  "welcomeButton": "欢迎"
+  "welcomeButton": "欢迎",
+  "bottomNavGuide": "写作指南",     
+  "bottomNavArticle": "文章" 
 }

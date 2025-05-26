@@ -1,6 +1,7 @@
 import 'package:flomosupport/pages/about.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Article extends StatefulWidget {
   const Article({super.key});
@@ -39,9 +40,11 @@ class _ArticleState extends State<Article> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Article'),
+        // title: Text('Article'),
+        title: Text(appLocalizations.articlePageTitle),
         actions: [
           IconButton(
             onPressed: () {

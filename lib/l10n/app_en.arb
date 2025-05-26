@@ -2,18 +2,45 @@
   "@@locale": "en",
   "appTitle": "Flomo Support",
   "@appTitle": {
-    "description": "The title of the application"
+    "description": "The title of the application shown in the app bar and task switcher"
   },
   "homePageTitle": "Homepage",
+  "@homePageTitle": {
+    "description": "The title displayed on the main home page"
+  },
   "articlePageTitle": "Articles",
+  "@articlePageTitle": {
+    "description": "Title for the articles page"
+  },
   "guidePageTitle": "Guides",
+  "@guidePageTitle": {
+    "description": "Title for the guides page"
+  },
   "aboutPageTitle": "About Us",
+  "@aboutPageTitle": {
+    "description": "Title for the about us page"
+  },
   "notificationPageTitle": "Notifications",
+  "@notificationPageTitle": {
+    "description": "Title for the notifications page"
+  },
   "helloMessage": "Hello, {userName}!",
   "@helloMessage": {
+    "description": "A greeting message with a user name placeholder",
     "placeholders": {
       "userName": {}
     }
   },
-  "welcomeButton": "Welcome"
+  "welcomeButton": "Welcome",
+  "@welcomeButton": {
+    "description": "Text for a welcome button"
+  },
+  "bottomNavGuide": "Writing Guide",     
+  "@bottomNavGuide": {
+    "description": "Label for the writing guide tab in the bottom navigation bar"
+  },
+  "bottomNavArticle": "Article",       
+  "@bottomNavArticle": {
+    "description": "Label for the article tab in the bottom navigation bar"
+  }
 }
