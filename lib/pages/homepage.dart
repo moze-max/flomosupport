@@ -10,7 +10,10 @@ class Homepage extends StatefulWidget {
 
 class HomePageState extends State<Homepage> {
   int currentindex = 0;
-  final List<Widget> _pages = [Guide(), Article()];
+  final List<Widget> _pages = [
+    Guide(),
+    Article(),
+  ];
 
   void onTabChanged(int index) {
     setState(() {
@@ -21,7 +24,6 @@ class HomePageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('Flomo Support')),
       body: IndexedStack(index: currentindex, children: _pages),
       bottomNavigationBar: Theme(
         data: ThemeData(splashColor: Colors.transparent),
@@ -31,11 +33,13 @@ class HomePageState extends State<Homepage> {
           unselectedFontSize: 14,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
+              key: Key('writing_guide_tab'),
               icon: Icon(Icons.auto_awesome_motion),
-              label: 'wirting guide',
+              label: 'writing guide',
               tooltip: '',
             ),
             BottomNavigationBarItem(
+              key: Key("article_tab"),
               icon: Icon(Icons.article_outlined),
               label: 'Article',
               tooltip: '',
