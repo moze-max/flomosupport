@@ -15,5 +15,9 @@
   "helloMessage": "你好，{userName}！",
   "welcomeButton": "欢迎",
   "bottomNavGuide": "写作指南",     
-  "bottomNavArticle": "文章" 
+  "bottomNavArticle": "文章" ,
+  "aboutPageTitle": "关于我们",
+  "aboutDeveloperIntro": "我只是一个路过的flomo使用者，没有他们那么强大的力量制作高级的产品",
+  "contactInfo": "定制联系:\nQQ:3023713469\n微信:同号",
+  "sponsorUs": "赞助我们:"
 }

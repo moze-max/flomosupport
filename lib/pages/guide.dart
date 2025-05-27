@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flomosupport/components/currentguide.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 import 'package:path/path.dart' as path;
 import 'dart:developer' as developer;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Guide extends StatefulWidget {
-  const Guide({super.key});
-
+  const Guide({super.key, required this.scaffoldKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<Guide> createState() => _GuideState();
 }
@@ -55,18 +57,28 @@ class _GuideState extends State<Guide> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Writing Guide'),
+        title: Text(appLocalizations.guidePageTitle),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                widget.scaffoldKey.currentState?.openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () async {
-              // 使用 await 获取返回结果
               final result = await Navigator.pushNamed(context, '/newguide');
               if (result != null && result == true) {
-                // 成功保存后重新加载模板
-                await loadTemplates(); // 调用 loadTemplates() 刷新数据
+                await loadTemplates();
               }
             },
           ),

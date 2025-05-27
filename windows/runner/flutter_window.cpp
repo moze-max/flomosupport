@@ -4,6 +4,9 @@
 
 #include "flutter/generated_plugin_registrant.h"
 
+const int kMinWindowWidth = 800; 
+const int kMinWindowHeight = 600; 
+
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
 
@@ -65,6 +68,14 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
     case WM_FONTCHANGE:
       flutter_controller_->engine()->ReloadSystemFonts();
       break;
+     
+     case WM_GETMINMAXINFO: {
+      MINMAXINFO* minMaxInfo = reinterpret_cast<MINMAXINFO*>(lparam);
+      // Set the minimum tracking size
+      minMaxInfo->ptMinTrackSize.x = kMinWindowWidth;
+      minMaxInfo->ptMinTrackSize.y = kMinWindowHeight;
+      return 0; // Return 0 to indicate that the message has been handled
+    }
   }
 
   return Win32Window::MessageHandler(hwnd, message, wparam, lparam);

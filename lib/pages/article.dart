@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Article extends StatefulWidget {
-  const Article({super.key});
-
+  const Article({super.key, required this.scaffoldKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<Article> createState() => _ArticleState();
 }
@@ -43,8 +43,19 @@ class _ArticleState extends State<Article> {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        // title: Text('Article'),
         title: Text(appLocalizations.articlePageTitle),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                // 打开最近的 Scaffold 的 Drawer
+                widget.scaffoldKey.currentState?.openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {

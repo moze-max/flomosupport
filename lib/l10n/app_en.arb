@@ -42,5 +42,22 @@
   "bottomNavArticle": "Article",       
   "@bottomNavArticle": {
     "description": "Label for the article tab in the bottom navigation bar"
+  },
+  "aboutPageTitle": "About Us",
+  "@aboutPageTitle": {
+    "description": "Title for the About Us page"
+  },
+  "aboutDeveloperIntro": "I am just a passing Flomo user, not possessing their powerful ability to create advanced products.",
+  "@aboutDeveloperIntro": {
+    "description": "Introduction about the developer on the About Us page"
+  },
+  "contactInfo": "Custom Contact:\nQQ:3023713469\nWeChat: Same as QQ",
+  "@contactInfo": {
+    "description": "Contact information for custom inquiries"
+  },
+  "sponsorUs": "Sponsor Us:",
+  "@sponsorUs": {
+    "description": "Call to action for sponsoring the app"
   }
+
 }

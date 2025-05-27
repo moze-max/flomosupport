@@ -16,10 +16,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     return MaterialApp(
       routes: {
-        '/article': (context) => const Article(),
-        '/guide': (context) => const Guide(),
+        '/article': (context) => Article(
+              scaffoldKey: scaffoldKey,
+            ),
+        '/guide': (context) => Guide(
+              scaffoldKey: scaffoldKey,
+            ),
         '/newguide': (context) => Newguide(),
         '/about': (context) => About(),
         '/notification': (context) => ntfic.Notification(),

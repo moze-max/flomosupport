@@ -1,3 +1,4 @@
+import 'package:flomosupport/pages/user_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'article.dart';
@@ -11,10 +12,18 @@ class Homepage extends StatefulWidget {
 
 class HomePageState extends State<Homepage> {
   int currentindex = 0;
-  final List<Widget> _pages = [
-    Guide(),
-    Article(),
-  ];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      Guide(scaffoldKey: _scaffoldKey), // Pass the key
+      Article(scaffoldKey: _scaffoldKey), // Pass the key
+    ];
+  }
 
   void onTabChanged(int index) {
     setState(() {
@@ -22,10 +31,22 @@ class HomePageState extends State<Homepage> {
     });
   }
 
+  double get _drawerWidth => MediaQuery.of(context).size.width / 2;
+
   @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
+      key: _scaffoldKey,
+      drawerEnableOpenDragGesture: true,
+      // 设置抽屉打开时主页面的蒙版颜色和透明度
+      drawerScrimColor: Colors.black54, // 黑色半透明蒙版
+      drawer: Drawer(
+        width: _drawerWidth, // 宽度设置为屏幕的一半
+        backgroundColor:
+            const Color.fromARGB(255, 185, 211, 228).withAlpha(255),
+        child: const UserAccountPage(),
+      ),
       body: IndexedStack(index: currentindex, children: _pages),
       bottomNavigationBar: Theme(
         data: ThemeData(splashColor: Colors.transparent),
