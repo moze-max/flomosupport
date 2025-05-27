@@ -2,7 +2,7 @@ import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/about.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/pages/notification.dart' as ntfic;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'pages/article.dart';
 import 'pages/guide.dart';

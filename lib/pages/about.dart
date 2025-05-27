@@ -115,7 +115,7 @@
 
 import 'package:flutter/material.dart';
 // 确保导入你生成的本地化文件
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flomosupport/l10n/app_localizations.dart';
 
 class About extends StatefulWidget {
   const About({super.key});

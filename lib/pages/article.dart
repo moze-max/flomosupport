@@ -1,7 +1,7 @@
 import 'package:flomosupport/pages/about.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flomosupport/l10n/app_localizations.dart';
 
 class Article extends StatefulWidget {
   const Article({super.key, required this.scaffoldKey});

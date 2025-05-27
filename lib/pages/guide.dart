@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 import 'package:path/path.dart' as path;
 import 'dart:developer' as developer;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flomosupport/l10n/app_localizations.dart';
 
 class Guide extends StatefulWidget {
   const Guide({super.key, required this.scaffoldKey});
