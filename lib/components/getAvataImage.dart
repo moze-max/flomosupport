@@ -6,7 +6,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class UserAvatarManager extends StatefulWidget {
-  const UserAvatarManager({super.key});
+  final double radius;
+  final bool enableActions;
+  const UserAvatarManager(
+      {super.key, this.radius = 40, this.enableActions = true});
 
   @override
   State<UserAvatarManager> createState() => _UserAvatarManagerState();
@@ -32,13 +35,18 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
 
   Future<void> _cropImage(File imageFile) async {
     if (Theme.of(context).platform == TargetPlatform.windows) {
+      print(
+          'Image cropping is not supported on Windows. Skipping cropping and returning to previous page.');
       setState(() {
         _pickedImage = imageFile; // 直接使用原始图片，不裁剪
       });
+      await _saveAvatarLocally(imageFile); // 即使未裁剪也保存
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Windows 平台暂不支持图片裁剪，已使用原图。')),
       );
-      _saveAvatarLocally(imageFile); // 即使未裁剪也保存
       return; // 提前返回
     }
 
@@ -47,15 +55,14 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: '裁剪头像',
-          toolbarColor: Theme.of(context).primaryColor, // 使用应用主题色
+          toolbarColor: Theme.of(context).primaryColor,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
           aspectRatioPresets: [
-            // 再次强调：这里才是 Android 的 aspectRatioPresets
             CropAspectRatioPreset.square,
           ],
-          hideBottomControls: false, // 显示底部控制条
+          hideBottomControls: false,
         ),
         IOSUiSettings(
           title: '裁剪头像',
@@ -73,14 +80,15 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
       setState(() {
         _pickedImage = File(croppedFile.path); // 更新为裁剪后的图片
       });
-      _saveAvatarLocally(_pickedImage!); // 保存头像
+      await _saveAvatarLocally(_pickedImage!); // 保存头像
     }
   }
 
   Future<void> _saveAvatarLocally(File imageFile) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir = Directory(path.join(appDir.path, 'avatars'));
+      final avatarsDir =
+          Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
       if (!await avatarsDir.exists()) {
         await avatarsDir.create(recursive: true);
       }
@@ -103,7 +111,8 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
   Future<void> _loadSavedAvatar() async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir = Directory(path.join(appDir.path, 'avatars'));
+      final avatarsDir =
+          Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
       final String fileName = 'user_avatar.png';
       final String filePath = path.join(avatarsDir.path, fileName);
       final File savedFile = File(filePath);
@@ -119,7 +128,11 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
     }
   }
 
-  void _showImageSourceActionSheet(BuildContext context) {
+  // 修改：显示操作弹窗，包含查看大图、拍照、从相册选择
+  void _showAvatarActionSheet(BuildContext context) {
+    if (!widget.enableActions) {
+      return;
+    }
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -127,26 +140,68 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // 1. 查看大图
+              if (_pickedImage != null) // 只有当有头像时才显示查看大图
+                ListTile(
+                  leading: const Icon(Icons.zoom_in),
+                  title: const Text('查看大图'),
+                  onTap: () {
+                    Navigator.of(context).pop(); // 关闭底部弹窗
+                    _viewLargeImage(context, _pickedImage!); // 跳转到查看大图页面
+                  },
+                ),
+              // 2. 拍照
               ListTile(
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('拍照'),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // 关闭底部弹窗
                   _pickImage(ImageSource.camera);
                 },
               ),
+              // 3. 从相册选择
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('从相册选择'),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // 关闭底部弹窗
                   _pickImage(ImageSource.gallery);
                 },
               ),
+              // 4. 取消按钮 (可选，用户也可以直接点击外部关闭)
+              // ListTile(
+              //   title: const Text('取消', textAlign: TextAlign.center),
+              //   onTap: () => Navigator.of(context).pop(),
+              // ),
             ],
           ),
         );
       },
+    );
+  }
+
+  // 新增：查看大图的函数
+  void _viewLargeImage(BuildContext context, File imageFile) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black, // 全屏查看通常背景为黑色
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            iconTheme: const IconThemeData(color: Colors.white), // 返回按钮为白色
+            title: const Text('头像大图', style: TextStyle(color: Colors.white)),
+          ),
+          body: Center(
+            child: InteractiveViewer(
+              // 允许缩放和平移
+              panEnabled: true, // 允许平移
+              minScale: 0.5,
+              maxScale: 4,
+              child: Image.file(imageFile),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -156,27 +211,21 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 80, // 可以调整头像大小
-            backgroundColor: Colors.grey[200],
-            backgroundImage:
-                _pickedImage != null ? FileImage(_pickedImage!) : null,
-            child: _pickedImage == null
-                ? Icon(
-                    Icons.person,
-                    size: 80,
-                    color: Colors.grey[400],
-                  )
-                : null,
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton.icon(
-            onPressed: () => _showImageSourceActionSheet(context),
-            icon: const Icon(Icons.edit),
-            label: const Text('更改头像'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              textStyle: const TextStyle(fontSize: 16),
+          // 将 CircleAvatar 包裹在 GestureDetector 中使其可点击
+          GestureDetector(
+            onTap: () => _showAvatarActionSheet(context), // 点击时显示操作弹窗
+            child: CircleAvatar(
+              radius: widget.radius, // 可以调整头像大小
+              backgroundColor: Colors.grey[200],
+              backgroundImage:
+                  _pickedImage != null ? FileImage(_pickedImage!) : null,
+              child: _pickedImage == null
+                  ? Icon(
+                      Icons.person,
+                      size: 80,
+                      color: Colors.grey[400],
+                    )
+                  : null,
             ),
           ),
         ],

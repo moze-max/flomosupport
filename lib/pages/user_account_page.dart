@@ -1,6 +1,5 @@
 import 'package:flomosupport/components/getAvataImage.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 class UserAccountPage extends StatefulWidget {
   const UserAccountPage({super.key});
@@ -17,34 +16,35 @@ class _UserAccountPageState extends State<UserAccountPage> {
       // tileColor: const Color.fromARGB(255, 108, 187, 240).withAlpha(255),
       selectedTileColor: Colors.blueAccent.withAlpha(128),
       child: ListView(
-        padding: EdgeInsets.zero,
         children: <Widget>[
-          Padding(padding: EdgeInsets.zero),
           const DrawerHeader(
-            padding: EdgeInsets.zero,
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 75, 158, 227),
             ),
-            child: Align(
-              // 使用 Align 来控制子组件的位置
-              alignment: Alignment.bottomLeft, // 将文本对齐到底部左侧
-              child: Padding(
-                padding: EdgeInsets.all(16.0), // 为文本添加你想要的内边距
-                child: Text(
-                  '未来的账户预留', // 你的标题
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+            child: Padding(
+              padding: EdgeInsets.all(16.0), // 为 DrawerHeader 内容添加内边距
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center, // 垂直居中对齐
+                children: [
+                  UserAvatarManager(
+                    radius: 50,
                   ),
-                ),
+                  SizedBox(width: 30),
+                  Expanded(
+                    child: Text(
+                      'moze',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis, // 昵称过长时显示省略号
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.0), // 添加一些垂直间距
-            child: UserAvatarManager(),
-          ),
-          const Divider(height: 1),
           ListTile(
             leading: Icon(Icons.home, color: Colors.white70),
             title: Text(

@@ -29,9 +29,7 @@ class MyApp extends StatelessWidget {
         '/about': (context) => About(),
         '/notification': (context) => ntfic.Notification(),
       },
-      // title: 'Flomo Support',
       title: AppLocalizations.of(context)?.appTitle,
-
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
