@@ -11,12 +11,14 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        // Correct syntax for Kotlin DSL
+        isCoreLibraryDesugaringEnabled = true // Use 'is' prefix and '=' for assignment
+        sourceCompatibility = JavaVersion.VERSION_1_8 // Use '=' for assignment
+        targetCompatibility = JavaVersion.VERSION_1_8 // Use '=' for assignment
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "1.8" // Use double quotes for String literals
     }
 
     defaultConfig {
@@ -42,3 +44,10 @@ android {
 flutter {
     source = "../.."
 }
+
+// === ADD THIS ENTIRE BLOCK HERE, WITH KOTLIN DSL SYNTAX ===
+dependencies {
+    // Correct syntax for Kotlin DSL
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4") // Use parentheses for method calls
+}
+// ==========================================================
