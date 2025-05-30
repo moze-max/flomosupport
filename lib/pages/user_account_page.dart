@@ -11,37 +11,43 @@ class UserAccountPage extends StatefulWidget {
 class _UserAccountPageState extends State<UserAccountPage> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final avatarRadius = screenWidth * 0.12;
+    final drawerHeaderHeight = avatarRadius * 2 + 64.0;
     EdgeInsets.zero;
     return ListTileTheme(
-      // tileColor: const Color.fromARGB(255, 108, 187, 240).withAlpha(255),
       selectedTileColor: Colors.blueAccent.withAlpha(128),
       child: ListView(
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 75, 158, 227),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(16.0), // 为 DrawerHeader 内容添加内边距
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center, // 垂直居中对齐
-                children: [
-                  UserAvatarManager(
-                    radius: 50,
-                  ),
-                  SizedBox(width: 30),
-                  Expanded(
-                    child: Text(
-                      'moze',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis, // 昵称过长时显示省略号
+          SizedBox(
+            height: drawerHeaderHeight,
+            child: DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 75, 158, 227),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 12, bottom: 12, left: 8, right: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, // 垂直居中对齐
+                  children: [
+                    UserAvatarManager(
+                      radius: avatarRadius,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 30),
+                    const Expanded(
+                      child: Text(
+                        'moze',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis, // 昵称过长时显示省略号
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

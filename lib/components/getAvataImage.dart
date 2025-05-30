@@ -60,6 +60,7 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
           aspectRatioPresets: [
+            CropAspectRatioPreset.original,
             CropAspectRatioPreset.square,
           ],
           hideBottomControls: false,
