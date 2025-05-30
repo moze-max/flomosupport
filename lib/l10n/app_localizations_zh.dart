@@ -18,7 +18,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get articlePageTitle => '详情';
 
   @override
-  String get guidePageTitle => '指南';
+  String get guidePageTitle => '模板';
 
   @override
   String get aboutPageTitle => '关于我们';
@@ -35,7 +35,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get welcomeButton => '欢迎';
 
   @override
-  String get bottomNavGuide => '写作指南';
+  String get bottomNavGuide => '写作模板';
 
   @override
   String get aboutDeveloperIntro => '我只是一个路过的flomo使用者，没有他们那么强大的力量制作高级的产品';
@@ -123,4 +123,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get personalInfoProtection => '个人信息保护设置';
+
+  @override
+  String get notificationsettingTitle => '通知设置';
 }

@@ -1,5 +1,6 @@
 import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
+import 'package:flomosupport/pages/article/notificationsetting.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/pages/notification.dart' as ntfic;
 import 'package:flomosupport/l10n/app_localizations.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/newguide': (context) => Newguide(),
         '/about': (context) => About(),
         '/notification': (context) => ntfic.Notification(),
+        '/notificationsetting': (context) => Notificationsetting(),
       },
       title: AppLocalizations.of(context)?.appTitle,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

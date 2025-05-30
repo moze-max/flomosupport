@@ -119,7 +119,7 @@ abstract class AppLocalizations {
   /// No description provided for @guidePageTitle.
   ///
   /// In zh, this message translates to:
-  /// **'指南'**
+  /// **'模板'**
   String get guidePageTitle;
 
   /// No description provided for @aboutPageTitle.
@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @bottomNavGuide.
   ///
   /// In zh, this message translates to:
-  /// **'写作指南'**
+  /// **'写作模板'**
   String get bottomNavGuide;
 
   /// No description provided for @aboutDeveloperIntro.
@@ -325,6 +325,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'个人信息保护设置'**
   String get personalInfoProtection;
+
+  /// No description provided for @notificationsettingTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'通知设置'**
+  String get notificationsettingTitle;
 }
 
 class _AppLocalizationsDelegate

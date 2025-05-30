@@ -4,7 +4,6 @@ import 'package:flomosupport/l10n/app_localizations.dart';
 
 class ApiKeyManagementPage extends StatefulWidget {
   const ApiKeyManagementPage({super.key});
-
   @override
   State<ApiKeyManagementPage> createState() => _ApiKeyManagementPageState();
 }
@@ -86,17 +85,6 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage> {
               ),
             ),
             const SizedBox(height: 8),
-            // Text(
-            //   _currentApiKey != null && _currentApiKey!.isNotEmpty
-            //       ? appLocalizations.keyStatusSaved
-            //       : appLocalizations.keyStatusNotSet, // "已保存" / "未设置"
-            //   style: TextStyle(
-            //     fontSize: 14,
-            //     color: _currentApiKey != null && _currentApiKey!.isNotEmpty
-            //         ? Colors.green[700]
-            //         : Colors.red[700],
-            //   ),
-            // ),
             Text(
               _currentApiKey != null && _currentApiKey!.isNotEmpty
                   ? _currentApiKey! // 如果有密钥，直接显示密钥

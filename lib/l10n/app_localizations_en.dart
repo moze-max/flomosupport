@@ -126,4 +126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get personalInfoProtection =>
       'Personal Information Protection Settings';
+
+  @override
+  String get notificationsettingTitle => 'NotificationSetting';
 }

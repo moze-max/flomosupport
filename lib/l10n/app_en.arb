@@ -81,6 +81,7 @@
     "apiKeyManagementPageTitle": "API Key Settings",
     "currentSavedKeyInfo": "Current API Key Info",
     "apiKeyInputLabel": "API Key",
-    "apiKeyEmptyWarning": "API key cannot be empty!"
+    "apiKeyEmptyWarning": "API key cannot be empty!",
+    "notificationsettingTitle":"NotificationSetting"
 
 }

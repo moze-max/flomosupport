@@ -30,8 +30,6 @@ class HomePageState extends State<Homepage> {
     });
   }
 
-  // double get _drawerWidth => MediaQuery.of(context).size.width / 2;
-
   @override
   Widget build(BuildContext context) {
     final double dynamicDrawerWidth;

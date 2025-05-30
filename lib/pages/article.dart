@@ -1,119 +1,15 @@
-// import 'package:flomosupport/pages/about.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:flomosupport/l10n/app_localizations.dart';
-
-// class Article extends StatefulWidget {
-//   const Article({super.key, required this.scaffoldKey});
-//   final GlobalKey<ScaffoldState> scaffoldKey;
-//   @override
-//   State<Article> createState() => _ArticleState();
-// }
-
-// class _ArticleState extends State<Article> {
-//   final storage = FlutterSecureStorage();
-//   bool showSuccessMessage = false;
-//   String? savedKey;
-//   final textController = TextEditingController();
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadKey();
-//   }
-
-//   Future<void> _loadKey() async {
-//     final key = await storage.read(key: 'APIkey');
-//     setState(() {
-//       savedKey = key;
-//     });
-//   }
-
-//   Future<void> saveKey() async {
-//     final key = textController.text;
-//     await storage.write(key: 'APIkey', value: key);
-//     setState(() {
-//       showSuccessMessage = true;
-//       savedKey = key;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(appLocalizations.articlePageTitle),
-//         leading: Builder(
-//           builder: (BuildContext context) {
-//             return IconButton(
-//               icon: const Icon(Icons.menu),
-//               onPressed: () {
-//                 // 打开最近的 Scaffold 的 Drawer
-//                 widget.scaffoldKey.currentState?.openDrawer();
-//               },
-//               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-//             );
-//           },
-//         ),
-//         actions: [
-//           IconButton(
-//             onPressed: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(builder: (context) => About()),
-//               );
-//             },
-//             icon: Icon(Icons.info_outline),
-//           ),
-//         ],
-//       ),
-//       body: Padding(
-//         padding: EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             TextField(
-//               controller: textController,
-//               decoration: InputDecoration(
-//                 labelText: '请输入密钥',
-//                 border: OutlineInputBorder(),
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(onPressed: saveKey, child: Text('Save keys')),
-//             SizedBox(height: 20),
-//             if (showSuccessMessage)
-//               Text(
-//                 '密钥保存成功！',
-//                 style: TextStyle(color: const Color.fromARGB(255, 21, 79, 101)),
-//               ),
-//             SizedBox(height: 20),
-//             Text(
-//               '当前保存的密钥：$savedKey',
-//               style: TextStyle(
-//                 color: const Color.fromARGB(255, 76, 175, 132),
-//                 fontSize: 16,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     textController.dispose();
-//     super.dispose();
-//   }
-// }
-
 import 'package:flomosupport/pages/article/APIkey.dart';
+import 'package:flomosupport/pages/article/GeneralSettings.dart';
+import 'package:flomosupport/pages/article/notificationsetting.dart';
+import 'package:flomosupport/pages/article/AccountSecurity.dart';
+import 'package:flomosupport/pages/article/privacy/info.dart';
+import 'package:flomosupport/pages/article/privacy/privacy_tip.dart';
+import 'package:flomosupport/pages/article/privacy/security.dart';
+import 'package:flomosupport/pages/article/privacy/share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
-import 'package:flomosupport/pages/article/about.dart'; // 确保导入了 About 页面
+import 'package:flomosupport/pages/article/about.dart';
 import 'dart:io'; // 导入 dart:io 用于 File
 import 'package:path_provider/path_provider.dart'; // 导入 path_provider 获取应用目录
 import 'package:path/path.dart' as path; // 导入 path 包处理路径
@@ -131,7 +27,7 @@ class _ArticleState extends State<Article> {
   String? savedKey;
   final textController = TextEditingController();
 
-  File? _localAvatarFile; // 新增：用于存储本地头像文件
+  File? _localAvatarFile;
 
   @override
   void initState() {
@@ -171,11 +67,10 @@ class _ArticleState extends State<Article> {
       }
     } catch (e) {
       if (mounted) {
-        // 确保 Widget 仍然在树中，避免 setState 或 showSnackBar 在 Widget 销毁后调用
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('加载本地头像失败: ${e.toString()}'), // 显示具体的错误信息
-            backgroundColor: Colors.red, // 错误提示可以使用红色背景
+            content: Text('加载本地头像失败: ${e.toString()}'),
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -237,7 +132,8 @@ class _ArticleState extends State<Article> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
+            padding:
+                const EdgeInsets.only(bottom: 24.0, left: 10.0, right: 16.0),
             child: TextField(
               decoration: InputDecoration(
                 hintText: appLocalizations.searchHint,
@@ -246,9 +142,6 @@ class _ArticleState extends State<Article> {
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
-                filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor ??
-                    Colors.grey[200],
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
               ),
               onChanged: (value) {
@@ -266,14 +159,13 @@ class _ArticleState extends State<Article> {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  // **修改这里：根据 _localAvatarFile 来显示头像**
                   backgroundImage: _localAvatarFile != null
-                      ? FileImage(_localAvatarFile!) // 如果本地头像文件存在，使用 FileImage
-                      : null, // 否则不设置 backgroundImage
+                      ? FileImage(_localAvatarFile!)
+                      : null,
                   child: _localAvatarFile == null
                       ? const Icon(Icons.account_circle,
-                          size: 28, color: Colors.grey) // 如果没有本地头像，显示默认图标
-                      : null, // 如果有本地头像，不显示子组件
+                          size: 28, color: Colors.grey)
+                      : null,
                 ),
                 const SizedBox(width: 8),
                 const Icon(Icons.keyboard_arrow_right),
@@ -281,7 +173,10 @@ class _ArticleState extends State<Article> {
             ),
             onTap: () {
               // 导航到账户与安全页面
-              // 可以在这里 push 一个新的路由，例如 Navigator.push(context, MaterialPageRoute(builder: (context) => AccountSecurityPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AccountsecurityPage()));
             },
           ),
           const Divider(),
@@ -304,6 +199,11 @@ class _ArticleState extends State<Article> {
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到消息通知设置
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Notificationsetting()),
+              );
             },
           ),
           ListTile(
@@ -328,6 +228,11 @@ class _ArticleState extends State<Article> {
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到通用设置
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Generalsettings()),
+              );
             },
           ),
           const Divider(),
@@ -367,14 +272,10 @@ class _ArticleState extends State<Article> {
                 MaterialPageRoute(
                     builder: (context) => const ApiKeyManagementPage()),
               );
-              // 从新页面返回后，重新加载密钥状态，以更新显示
               _loadKey();
             },
           ),
-          // 移除原有的成功消息和 Divider，因为它们都在新页面处理了
-          // if (showSuccessMessage) ...
-          const Divider(), // 仍然保留一个分隔线
-
+          const Divider(),
           // --- 隐私部分 ---
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -387,20 +288,32 @@ class _ArticleState extends State<Article> {
               ),
             ),
           ),
+
+          // 隐私设置
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),
             title: Text(appLocalizations.privacySettings),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到隐私设置
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PrivacyTip()),
+              );
             },
           ),
+
+          // 个人信息收集清单
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(appLocalizations.personalInfoCollection),
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到个人信息收集清单
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Info()),
+              );
             },
           ),
           ListTile(
@@ -409,6 +322,10 @@ class _ArticleState extends State<Article> {
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到第三方共享清单
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Share()),
+              );
             },
           ),
           ListTile(
@@ -417,6 +334,10 @@ class _ArticleState extends State<Article> {
             trailing: const Icon(Icons.keyboard_arrow_right),
             onTap: () {
               // 导航到个人信息保护设置
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Security()),
+              );
             },
           ),
           const Divider(),
