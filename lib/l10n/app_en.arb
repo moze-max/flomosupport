@@ -43,10 +43,7 @@
   "@bottomNavArticle": {
     "description": "Label for the article tab in the bottom navigation bar"
   },
-  "aboutPageTitle": "About Us",
-  "@aboutPageTitle": {
-    "description": "Title for the About Us page"
-  },
+  
   "aboutDeveloperIntro": "I am just a passing Flomo user, not possessing their powerful ability to create advanced products.",
   "@aboutDeveloperIntro": {
     "description": "Introduction about the developer on the About Us page"
@@ -58,6 +55,32 @@
   "sponsorUs": "Sponsor Us:",
   "@sponsorUs": {
     "description": "Call to action for sponsoring the app"
-  }
+  },
+    "searchHint": "Search settings",
+    "accountAndSecurity": "Account and Security",
+    "functionsSectionTitle": "Functions",
+    "messageNotifications": "Message Notifications",
+    "modeSelection": "Mode Selection",
+    "normalMode": "Normal Mode",
+    "personalization": "Personalization & Privileges",
+    "generalSettings": "General",
+    "apiKeySectionTitle": "API Key Management",
+    "enterApiKey": "Enter API Key",
+    "currentSavedKey": "Current saved key",
+    "notSet": "Not Set",
+    "apiKeyHint": "Enter your key",
+    "saveButton": "Save",
+    "keySavedSuccess": "Key saved successfully!",
+    "privacySectionTitle": "Privacy",
+    "privacySettings": "Privacy Settings",
+    "personalInfoCollection": "Personal Information Collection List",
+    "thirdPartyInfoSharing": "Third-Party Information Sharing List",
+    "personalInfoProtection": "Personal Information Protection Settings",
+    "keyStatusSaved": "Saved",
+    "keyStatusNotSet": "Not Set",
+    "apiKeyManagementPageTitle": "API Key Settings",
+    "currentSavedKeyInfo": "Current API Key Info",
+    "apiKeyInputLabel": "API Key",
+    "apiKeyEmptyWarning": "API key cannot be empty!"
 
 }

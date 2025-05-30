@@ -4,6 +4,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'dart:developer' as developer;
 
 class UserAvatarManager extends StatefulWidget {
   final double radius;
@@ -35,18 +36,19 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
 
   Future<void> _cropImage(File imageFile) async {
     if (Theme.of(context).platform == TargetPlatform.windows) {
-      print(
-          'Image cropping is not supported on Windows. Skipping cropping and returning to previous page.');
       setState(() {
         _pickedImage = imageFile; // 直接使用原始图片，不裁剪
       });
       await _saveAvatarLocally(imageFile); // 即使未裁剪也保存
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+      if (mounted) {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Windows 平台暂不支持图片裁剪，已使用原图。')),
+        );
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Windows 平台暂不支持图片裁剪，已使用原图。')),
-      );
+
       return; // 提前返回
     }
 
@@ -97,15 +99,19 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
       final String filePath = path.join(avatarsDir.path, fileName);
 
       await imageFile.copy(filePath);
-      print('头像已保存到: $filePath');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('头像保存成功！')),
-      );
+      developer.log('头像已保存到: $filePath');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('头像保存成功！')),
+        );
+      }
     } catch (e) {
-      print('保存头像失败: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('头像保存失败！')),
-      );
+      developer.log('保存头像失败: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('头像保存失败！')),
+        );
+      }
     }
   }
 
@@ -122,10 +128,10 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
         setState(() {
           _pickedImage = savedFile;
         });
-        print('已加载本地头像: $filePath');
+        developer.log('已加载本地头像: $filePath');
       }
     } catch (e) {
-      print('加载本地头像失败: $e');
+      developer.log('加载本地头像失败: $e');
     }
   }
 
@@ -169,11 +175,6 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
                   _pickImage(ImageSource.gallery);
                 },
               ),
-              // 4. 取消按钮 (可选，用户也可以直接点击外部关闭)
-              // ListTile(
-              //   title: const Text('取消', textAlign: TextAlign.center),
-              //   onTap: () => Navigator.of(context).pop(),
-              // ),
             ],
           ),
         );

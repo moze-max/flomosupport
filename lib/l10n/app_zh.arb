@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "浮墨支持",
+  "appTitle": "浮墨支持者",
   "@appTitle": {
     "description": "App的标题"
   },
@@ -8,16 +8,40 @@
   "@homePageTitle":{
     "description": "首页标题的名字"
   },
-  "articlePageTitle": "文章",
+  "articlePageTitle": "详情",
   "guidePageTitle": "指南",
   "aboutPageTitle": "关于我们",
   "notificationPageTitle": "通知",
   "helloMessage": "你好，{userName}！",
   "welcomeButton": "欢迎",
   "bottomNavGuide": "写作指南",     
-  "bottomNavArticle": "文章" ,
-  "aboutPageTitle": "关于我们",
   "aboutDeveloperIntro": "我只是一个路过的flomo使用者，没有他们那么强大的力量制作高级的产品",
   "contactInfo": "定制联系:\nQQ:3023713469\n微信:同号",
-  "sponsorUs": "赞助我们:"
+  "sponsorUs": "赞助我们:",
+    "notSet": "未设置",
+    "searchHint": "搜索设置",
+    "accountAndSecurity": "账号与安全",
+    "functionsSectionTitle": "功能",
+    "messageNotifications": "消息通知",
+    "modeSelection": "模式选择",
+    "normalMode": "普通模式",
+    "personalization": "个性装扮与特权外显",
+    "generalSettings": "通用",
+    "apiKeySectionTitle": "密钥管理",
+    "currentSavedKey": "当前保存的密钥",
+    "keyStatusSaved": "已保存",
+    "keyStatusNotSet": "未设置",
+    "apiKeyManagementPageTitle": "API 密钥设置",
+    "currentSavedKeyInfo": "当前 API 密钥信息",
+    "enterApiKey": "输入/修改 API 密钥",
+    "apiKeyInputLabel": "密钥",
+    "apiKeyHint": "在此处输入您的密钥",
+    "saveButton": "保存",
+    "keySavedSuccess": "密钥保存成功！",
+    "apiKeyEmptyWarning": "API 密钥不能为空！",
+    "privacySectionTitle": "隐私",
+    "privacySettings": "隐私设置",
+    "personalInfoCollection": "个人信息收集清单",
+    "thirdPartyInfoSharing": "第三方个人信息共享清单",
+    "personalInfoProtection": "个人信息保护设置"
 }

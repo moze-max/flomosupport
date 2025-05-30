@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// App的标题
   ///
   /// In zh, this message translates to:
-  /// **'浮墨支持'**
+  /// **'浮墨支持者'**
   String get appTitle;
 
   /// 首页标题的名字
@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @articlePageTitle.
   ///
   /// In zh, this message translates to:
-  /// **'文章'**
+  /// **'详情'**
   String get articlePageTitle;
 
   /// No description provided for @guidePageTitle.
@@ -152,12 +152,6 @@ abstract class AppLocalizations {
   /// **'写作指南'**
   String get bottomNavGuide;
 
-  /// No description provided for @bottomNavArticle.
-  ///
-  /// In zh, this message translates to:
-  /// **'文章'**
-  String get bottomNavArticle;
-
   /// No description provided for @aboutDeveloperIntro.
   ///
   /// In zh, this message translates to:
@@ -175,6 +169,162 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'赞助我们:'**
   String get sponsorUs;
+
+  /// No description provided for @notSet.
+  ///
+  /// In zh, this message translates to:
+  /// **'未设置'**
+  String get notSet;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索设置'**
+  String get searchHint;
+
+  /// No description provided for @accountAndSecurity.
+  ///
+  /// In zh, this message translates to:
+  /// **'账号与安全'**
+  String get accountAndSecurity;
+
+  /// No description provided for @functionsSectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'功能'**
+  String get functionsSectionTitle;
+
+  /// No description provided for @messageNotifications.
+  ///
+  /// In zh, this message translates to:
+  /// **'消息通知'**
+  String get messageNotifications;
+
+  /// No description provided for @modeSelection.
+  ///
+  /// In zh, this message translates to:
+  /// **'模式选择'**
+  String get modeSelection;
+
+  /// No description provided for @normalMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'普通模式'**
+  String get normalMode;
+
+  /// No description provided for @personalization.
+  ///
+  /// In zh, this message translates to:
+  /// **'个性装扮与特权外显'**
+  String get personalization;
+
+  /// No description provided for @generalSettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'通用'**
+  String get generalSettings;
+
+  /// No description provided for @apiKeySectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'密钥管理'**
+  String get apiKeySectionTitle;
+
+  /// No description provided for @currentSavedKey.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前保存的密钥'**
+  String get currentSavedKey;
+
+  /// No description provided for @keyStatusSaved.
+  ///
+  /// In zh, this message translates to:
+  /// **'已保存'**
+  String get keyStatusSaved;
+
+  /// No description provided for @keyStatusNotSet.
+  ///
+  /// In zh, this message translates to:
+  /// **'未设置'**
+  String get keyStatusNotSet;
+
+  /// No description provided for @apiKeyManagementPageTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'API 密钥设置'**
+  String get apiKeyManagementPageTitle;
+
+  /// No description provided for @currentSavedKeyInfo.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前 API 密钥信息'**
+  String get currentSavedKeyInfo;
+
+  /// No description provided for @enterApiKey.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入/修改 API 密钥'**
+  String get enterApiKey;
+
+  /// No description provided for @apiKeyInputLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'密钥'**
+  String get apiKeyInputLabel;
+
+  /// No description provided for @apiKeyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'在此处输入您的密钥'**
+  String get apiKeyHint;
+
+  /// No description provided for @saveButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get saveButton;
+
+  /// No description provided for @keySavedSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'密钥保存成功！'**
+  String get keySavedSuccess;
+
+  /// No description provided for @apiKeyEmptyWarning.
+  ///
+  /// In zh, this message translates to:
+  /// **'API 密钥不能为空！'**
+  String get apiKeyEmptyWarning;
+
+  /// No description provided for @privacySectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'隐私'**
+  String get privacySectionTitle;
+
+  /// No description provided for @privacySettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'隐私设置'**
+  String get privacySettings;
+
+  /// No description provided for @personalInfoCollection.
+  ///
+  /// In zh, this message translates to:
+  /// **'个人信息收集清单'**
+  String get personalInfoCollection;
+
+  /// No description provided for @thirdPartyInfoSharing.
+  ///
+  /// In zh, this message translates to:
+  /// **'第三方个人信息共享清单'**
+  String get thirdPartyInfoSharing;
+
+  /// No description provided for @personalInfoProtection.
+  ///
+  /// In zh, this message translates to:
+  /// **'个人信息保护设置'**
+  String get personalInfoProtection;
 }
 
 class _AppLocalizationsDelegate

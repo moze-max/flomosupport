@@ -79,7 +79,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              Navigator.pushNamed(context, '/article');
               // Navigate to Settings page
             },
           ),

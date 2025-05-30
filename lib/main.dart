@@ -1,5 +1,5 @@
 import 'package:flomosupport/components/newguide.dart';
-import 'package:flomosupport/pages/about.dart';
+import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/pages/notification.dart' as ntfic;
 import 'package:flomosupport/l10n/app_localizations.dart';

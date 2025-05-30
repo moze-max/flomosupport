@@ -38,9 +38,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavGuide => 'Writing Guide';
 
   @override
-  String get bottomNavArticle => 'Article';
-
-  @override
   String get aboutDeveloperIntro =>
       'I am just a passing Flomo user, not possessing their powerful ability to create advanced products.';
 
@@ -50,4 +47,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sponsorUs => 'Sponsor Us:';
+
+  @override
+  String get notSet => 'Not Set';
+
+  @override
+  String get searchHint => 'Search settings';
+
+  @override
+  String get accountAndSecurity => 'Account and Security';
+
+  @override
+  String get functionsSectionTitle => 'Functions';
+
+  @override
+  String get messageNotifications => 'Message Notifications';
+
+  @override
+  String get modeSelection => 'Mode Selection';
+
+  @override
+  String get normalMode => 'Normal Mode';
+
+  @override
+  String get personalization => 'Personalization & Privileges';
+
+  @override
+  String get generalSettings => 'General';
+
+  @override
+  String get apiKeySectionTitle => 'API Key Management';
+
+  @override
+  String get currentSavedKey => 'Current saved key';
+
+  @override
+  String get keyStatusSaved => 'Saved';
+
+  @override
+  String get keyStatusNotSet => 'Not Set';
+
+  @override
+  String get apiKeyManagementPageTitle => 'API Key Settings';
+
+  @override
+  String get currentSavedKeyInfo => 'Current API Key Info';
+
+  @override
+  String get enterApiKey => 'Enter API Key';
+
+  @override
+  String get apiKeyInputLabel => 'API Key';
+
+  @override
+  String get apiKeyHint => 'Enter your key';
+
+  @override
+  String get saveButton => 'Save';
+
+  @override
+  String get keySavedSuccess => 'Key saved successfully!';
+
+  @override
+  String get apiKeyEmptyWarning => 'API key cannot be empty!';
+
+  @override
+  String get privacySectionTitle => 'Privacy';
+
+  @override
+  String get privacySettings => 'Privacy Settings';
+
+  @override
+  String get personalInfoCollection => 'Personal Information Collection List';
+
+  @override
+  String get thirdPartyInfoSharing => 'Third-Party Information Sharing List';
+
+  @override
+  String get personalInfoProtection =>
+      'Personal Information Protection Settings';
 }
