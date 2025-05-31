@@ -102,17 +102,27 @@ class _ArticleState extends State<Article> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
+    final bool canPop = Navigator.of(context).canPop();
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.articlePageTitle),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.menu),
+              icon: canPop
+                  ? const Icon(Icons.arrow_back_ios_new)
+                  : const Icon(Icons.menu),
               onPressed: () {
-                widget.scaffoldKey.currentState?.openDrawer();
+                if (canPop) {
+                  Navigator.pop(context); // 返回上一页
+                } else {
+                  // 打开抽屉
+                  widget.scaffoldKey.currentState?.openDrawer();
+                }
               },
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              tooltip: canPop
+                  ? MaterialLocalizations.of(context).backButtonTooltip
+                  : MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
         ),

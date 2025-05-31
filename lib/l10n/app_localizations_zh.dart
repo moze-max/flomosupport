@@ -15,7 +15,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homePageTitle => '首页';
 
   @override
-  String get articlePageTitle => '详情';
+  String get articlePageTitle => '设置';
 
   @override
   String get guidePageTitle => '模板';

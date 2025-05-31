@@ -26,32 +26,79 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
     _loadSavedAvatar(); // 尝试加载本地保存的头像
   }
 
+  // Helper to get the base avatar directory
+  Future<String> _getAvatarBaseDirPath() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final avatarsDir =
+        Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
+    if (!await avatarsDir.exists()) {
+      await avatarsDir.create(recursive: true);
+    }
+    return avatarsDir.path;
+  }
+
+  Future<File?> _getCurrentAvatarFile() async {
+    try {
+      final baseDirPath = await _getAvatarBaseDirPath();
+      final avatarsDir = Directory(baseDirPath);
+      if (!await avatarsDir.exists()) return null;
+
+      // List all files in the directory and find the latest one
+      final files = avatarsDir.listSync().whereType<File>().toList();
+      files
+          .sort((a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+
+      if (files.isNotEmpty) {
+        return files.first;
+      }
+    } catch (e) {
+      developer.log('Error getting current avatar file: $e');
+    }
+    return null;
+  }
+
+  // Helper to delete ALL previous avatar files
+  Future<void> _deleteAllOldAvatars() async {
+    try {
+      final baseDirPath = await _getAvatarBaseDirPath();
+      final avatarsDir = Directory(baseDirPath);
+      if (await avatarsDir.exists()) {
+        final files = avatarsDir.listSync().whereType<File>().toList();
+        for (var file in files) {
+          if (path.basename(file.path).startsWith('user_avatar_') &&
+              path.extension(file.path) == '.png') {
+            await file.delete();
+            developer.log('Deleted old avatar file: ${file.path}');
+          }
+        }
+      }
+    } catch (e) {
+      developer.log('Error deleting old avatars: $e');
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
 
     if (pickedFile != null) {
-      _cropImage(File(pickedFile.path)); // 立即进入裁剪阶段
+      if (mounted) {
+        if (Theme.of(context).platform == TargetPlatform.windows) {
+          final File originalImageFile = File(pickedFile.path);
+          await _saveAvatarLocally(originalImageFile); // Save the image
+          if (mounted) {
+            // No need for imgKey = UniqueKey(); here anymore
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Windows 平台暂不支持图片裁剪，已使用原图。')),
+            );
+          }
+        } else {
+          _cropImage(File(pickedFile.path));
+        }
+      }
     }
   }
 
   Future<void> _cropImage(File imageFile) async {
-    if (Theme.of(context).platform == TargetPlatform.windows) {
-      setState(() {
-        _pickedImage = imageFile; // 直接使用原始图片，不裁剪
-      });
-      await _saveAvatarLocally(imageFile); // 即使未裁剪也保存
-      if (mounted) {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Windows 平台暂不支持图片裁剪，已使用原图。')),
-        );
-      }
-
-      return; // 提前返回
-    }
-
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       uiSettings: [
@@ -61,8 +108,8 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
+          aspectRatioPresets: const [
+            // Changed to const
             CropAspectRatioPreset.square,
           ],
           hideBottomControls: false,
@@ -70,7 +117,8 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
         IOSUiSettings(
           title: '裁剪头像',
           aspectRatioLockEnabled: true,
-          aspectRatioPresets: [
+          aspectRatioPresets: const [
+            // Changed to const
             CropAspectRatioPreset.square,
           ],
           doneButtonTitle: '完成',
@@ -80,27 +128,28 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
     );
 
     if (croppedFile != null) {
-      setState(() {
-        _pickedImage = File(croppedFile.path); // 更新为裁剪后的图片
-      });
-      await _saveAvatarLocally(_pickedImage!); // 保存头像
+      final File finalImageFile = File(croppedFile.path);
+      await _saveAvatarLocally(finalImageFile);
     }
   }
 
   Future<void> _saveAvatarLocally(File imageFile) async {
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir =
-          Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
-      if (!await avatarsDir.exists()) {
-        await avatarsDir.create(recursive: true);
-      }
-      final String fileName = 'user_avatar.png'; // 固定文件名或使用用户ID
-      final String filePath = path.join(avatarsDir.path, fileName);
+      await _deleteAllOldAvatars(); // Delete all previous avatar files
 
-      await imageFile.copy(filePath);
-      developer.log('头像已保存到: $filePath');
+      final baseDirPath = await _getAvatarBaseDirPath();
+      final String newFileName =
+          'user_avatar_${DateTime.now().microsecondsSinceEpoch}.png'; // Unique filename
+      final String newFilePath = path.join(baseDirPath, newFileName);
+
+      await imageFile.copy(newFilePath);
+      developer.log('新头像已保存到: $newFilePath');
+
       if (mounted) {
+        setState(() {
+          _pickedImage =
+              File(newFilePath); // Update _pickedImage with the new path
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('头像保存成功！')),
         );
@@ -117,25 +166,47 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
 
   Future<void> _loadSavedAvatar() async {
     try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir =
-          Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
-      final String fileName = 'user_avatar.png';
-      final String filePath = path.join(avatarsDir.path, fileName);
-      final File savedFile = File(filePath);
+      final File? latestAvatar = await _getCurrentAvatarFile();
 
-      if (await savedFile.exists()) {
+      if (latestAvatar != null && await latestAvatar.exists()) {
         setState(() {
-          _pickedImage = savedFile;
+          _pickedImage = latestAvatar;
         });
-        developer.log('已加载本地头像: $filePath');
+        developer.log('已加载本地头像: ${latestAvatar.path}');
+      } else {
+        developer.log('本地头像文件不存在或未找到最新头像。');
+        setState(() {
+          _pickedImage = null; // Ensure avatar displays null if no file found
+        });
       }
     } catch (e) {
       developer.log('加载本地头像失败: $e');
     }
   }
 
-  // 修改：显示操作弹窗，包含查看大图、拍照、从相册选择
+  // Added: Delete Avatar functionality
+  Future<void> _deleteAvatar() async {
+    try {
+      await _deleteAllOldAvatars(); // Delete all existing avatar files
+      setState(() {
+        _pickedImage = null; // Set to null immediately
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('头像已删除！')),
+        );
+      }
+      developer.log('头像已删除。');
+    } catch (e) {
+      developer.log('删除头像失败: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('删除头像失败！')),
+        );
+      }
+    }
+  }
+
   void _showAvatarActionSheet(BuildContext context) {
     if (!widget.enableActions) {
       return;
@@ -148,13 +219,13 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // 1. 查看大图
-              if (_pickedImage != null) // 只有当有头像时才显示查看大图
+              if (_pickedImage != null) // Only show if an avatar exists
                 ListTile(
                   leading: const Icon(Icons.zoom_in),
                   title: const Text('查看大图'),
                   onTap: () {
-                    Navigator.of(context).pop(); // 关闭底部弹窗
-                    _viewLargeImage(context, _pickedImage!); // 跳转到查看大图页面
+                    Navigator.of(context).pop();
+                    _viewLargeImage(context, _pickedImage!);
                   },
                 ),
               // 2. 拍照
@@ -162,7 +233,7 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('拍照'),
                 onTap: () {
-                  Navigator.of(context).pop(); // 关闭底部弹窗
+                  Navigator.of(context).pop();
                   _pickImage(ImageSource.camera);
                 },
               ),
@@ -171,10 +242,21 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('从相册选择'),
                 onTap: () {
-                  Navigator.of(context).pop(); // 关闭底部弹窗
+                  Navigator.of(context).pop();
                   _pickImage(ImageSource.gallery);
                 },
               ),
+              // 4. Delete Avatar
+              if (_pickedImage != null) // Only show if an avatar exists
+                ListTile(
+                  leading: const Icon(Icons.delete_forever, color: Colors.red),
+                  title:
+                      const Text('删除头像', style: TextStyle(color: Colors.red)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _deleteAvatar();
+                  },
+                ),
             ],
           ),
         );
@@ -182,24 +264,24 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
     );
   }
 
-  // 新增：查看大图的函数
   void _viewLargeImage(BuildContext context, File imageFile) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scaffold(
-          backgroundColor: Colors.black, // 全屏查看通常背景为黑色
+          backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            iconTheme: const IconThemeData(color: Colors.white), // 返回按钮为白色
+            iconTheme: const IconThemeData(color: Colors.white),
             title: const Text('头像大图', style: TextStyle(color: Colors.white)),
           ),
           body: Center(
             child: InteractiveViewer(
-              // 允许缩放和平移
-              panEnabled: true, // 允许平移
+              panEnabled: true,
               minScale: 0.5,
               maxScale: 4,
-              child: Image.file(imageFile),
+              child: Image.file(
+                imageFile,
+              ),
             ),
           ),
         ),
@@ -213,18 +295,17 @@ class _UserAvatarManagerState extends State<UserAvatarManager> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 将 CircleAvatar 包裹在 GestureDetector 中使其可点击
           GestureDetector(
-            onTap: () => _showAvatarActionSheet(context), // 点击时显示操作弹窗
+            onTap: () => _showAvatarActionSheet(context),
             child: CircleAvatar(
-              radius: widget.radius, // 可以调整头像大小
+              radius: widget.radius,
               backgroundColor: Colors.grey[200],
               backgroundImage:
                   _pickedImage != null ? FileImage(_pickedImage!) : null,
               child: _pickedImage == null
                   ? Icon(
                       Icons.person,
-                      size: 80,
+                      size: widget.radius * 1.5, // Icon size scales with radius
                       color: Colors.grey[400],
                     )
                   : null,

@@ -1,3 +1,4 @@
+import 'package:flomosupport/components/getAvataImage.dart';
 import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'pages/article.dart';
 import 'pages/guide.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await userAvatarNotifier.initialize();
   runApp(const MyApp());
 }
 

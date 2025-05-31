@@ -8,7 +8,7 @@
   "@homePageTitle": {
     "description": "首页标题的名字"
   },
-  "articlePageTitle": "详情",
+  "articlePageTitle": "设置",
   "guidePageTitle": "模板",
   "aboutPageTitle": "关于我们",
   "notificationPageTitle": "通知",

@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @articlePageTitle.
   ///
   /// In zh, this message translates to:
-  /// **'详情'**
+  /// **'设置'**
   String get articlePageTitle;
 
   /// No description provided for @guidePageTitle.
