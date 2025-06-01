@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Currentguide extends StatefulWidget {
   final Template template;
@@ -50,30 +51,31 @@ class _CurrentguideState extends State<Currentguide> {
             onPressed: () async {
               final confirm = await showDialog(
                 context: context,
-                builder:
-                    (context) => AlertDialog(
-                      title: Text('确认删除'),
-                      content: Text('确定要删除"${widget.template.name}"吗？此操作不可撤销。'),
-                      actions: [
-                        TextButton(
-                          child: Text('取消'),
-                          onPressed: () => Navigator.of(context).pop(false),
-                        ),
-                        TextButton(
-                          child: Text(
-                            '删除',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          onPressed: () => Navigator.of(context).pop(true),
-                        ),
-                      ],
+                builder: (context) => AlertDialog(
+                  title: Text('确认删除'),
+                  content: Text('确定要删除"${widget.template.name}"吗？此操作不可撤销。'),
+                  actions: [
+                    TextButton(
+                      child: Text('取消'),
+                      onPressed: () => Navigator.of(context).pop(false),
                     ),
+                    TextButton(
+                      child: Text(
+                        '删除',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(true),
+                    ),
+                  ],
+                ),
               );
               if (confirm == true) {
                 deleteTemplate();
               }
             },
           ),
+          IconButton(
+              onPressed: () => _shareTemplateContent(), icon: Icon(Icons.share))
         ],
       ),
       body: Padding(
@@ -154,6 +156,52 @@ class _CurrentguideState extends State<Currentguide> {
         }
         developer.log("\n[警告] 上传失败，5秒后重试（剩余尝试次数：$retryCount/$maxRetries）...");
         await Future.delayed(Duration(seconds: 5)); // 等待5秒后重试
+      }
+    }
+  }
+
+  Future<void> _shareTemplateContent() async {
+    // Construct the text content from the template
+    final StringBuffer shareTextBuffer = StringBuffer();
+    shareTextBuffer.writeln('Template Name: ${widget.template.name}\n');
+    shareTextBuffer.writeln('Items:');
+    for (String item in widget.template.items) {
+      shareTextBuffer.writeln('- $item');
+    }
+
+    final String shareText = shareTextBuffer.toString();
+    List<XFile> filesToShare = [];
+
+    // Check if an image path exists and the file is present
+    if (widget.template.imagePath != null &&
+        widget.template.imagePath!.isNotEmpty) {
+      final File imageFile = File(widget.template.imagePath!);
+      if (await imageFile.exists()) {
+        filesToShare.add(XFile(imageFile.path));
+        developer.log('Sharing template image: ${imageFile.path}');
+      } else {
+        developer.log('Template image file not found: ${imageFile.path}');
+      }
+    } else {
+      developer.log('No image path for template: ${widget.template.name}');
+    }
+
+    try {
+      if (filesToShare.isNotEmpty) {
+        await Share.shareXFiles(filesToShare,
+            text: shareText, subject: 'Template: ${widget.template.name}');
+      } else {
+        // If no image, just share the text
+        await Share.share(shareText,
+            subject: 'Template: ${widget.template.name}');
+      }
+      developer.log('Template content shared successfully.');
+    } catch (e) {
+      developer.log('Error sharing template content: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('分享模板失败: $e')),
+        );
       }
     }
   }

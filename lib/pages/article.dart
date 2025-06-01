@@ -33,7 +33,7 @@ class _ArticleState extends State<Article> {
   void initState() {
     super.initState();
     _loadKey();
-    _loadLocalAvatar(); // 新增：加载本地头像
+    _loadLocalAvatar();
     textController.addListener(() {
       if (showSuccessMessage) {
         setState(() {
@@ -56,16 +56,61 @@ class _ArticleState extends State<Article> {
       final appDir = await getApplicationDocumentsDirectory();
       final avatarsDir =
           Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
-      final String fileName = 'user_avatar.png';
-      final String filePath = path.join(avatarsDir.path, fileName);
-      final File savedFile = File(filePath);
 
-      if (await savedFile.exists()) {
-        setState(() {
-          _localAvatarFile = savedFile; // 设置本地头像文件
-        });
+      // Check if the directory exists
+      if (!await avatarsDir.exists()) {
+        // developer.log('Avatar directory does not exist: ${avatarsDir.path}');
+        if (mounted) {
+          setState(() {
+            _localAvatarFile = null; // No directory, so no avatar
+          });
+        }
+        return;
+      }
+
+      // List all files in the directory
+      final files = avatarsDir.listSync().whereType<File>().toList();
+
+      File? latestAvatarFile;
+
+      // Filter for avatar files (based on your new naming convention)
+      // and find the most recent one
+      if (files.isNotEmpty) {
+        final avatarFiles = files.where((file) {
+          final fileName = path.basename(file.path);
+          // Assuming your new files are like 'user_avatar_TIMESTAMP.png'
+          return fileName.startsWith('user_avatar_') &&
+              path.extension(fileName) == '.png';
+        }).toList();
+
+        if (avatarFiles.isNotEmpty) {
+          // Sort by last modified date to find the latest
+          avatarFiles.sort(
+              (a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
+          latestAvatarFile = avatarFiles.first;
+        }
+      }
+
+      if (latestAvatarFile != null && await latestAvatarFile.exists()) {
+        if (mounted) {
+          setState(() {
+            _localAvatarFile =
+                latestAvatarFile; // Set the local avatar file to the latest one found
+          });
+        }
+        // developer
+        //     .log('Successfully loaded local avatar: ${latestAvatarFile.path}');
+      } else {
+        if (mounted) {
+          setState(() {
+            _localAvatarFile = null; // No avatar found or file doesn't exist
+          });
+        }
+        // developer.log('No local avatar file found or it does not exist.');
       }
     } catch (e) {
+      // developer.log(
+      //     'Failed to load local avatar: $e'); // Use developer.log for debugging
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -165,7 +165,7 @@ import 'package:flomosupport/models/guidemodel.dart';
 import 'package:path/path.dart' as path;
 import 'dart:developer' as developer;
 import 'package:flomosupport/l10n/app_localizations.dart';
-// import 'package:flomosupport/themes.dart'; // 导入你的主题文件，用于获取颜色和文本样式
+// import 'package:share_plus/share_plus.dart';
 
 class Guide extends StatefulWidget {
   const Guide({super.key, required this.scaffoldKey});
@@ -177,7 +177,7 @@ class Guide extends StatefulWidget {
 class _GuideState extends State<Guide> {
   List<Template> templatesdata = [];
   final _fileName = 'templates.json';
-  final _imageDirName = 'guideimages'; // 图片文件夹名称，与 Newguide 保持一致
+  // final _imageDirName = 'guideimages'; // 图片文件夹名称，与 Newguide 保持一致
 
   @override
   void initState() {
@@ -228,6 +228,50 @@ class _GuideState extends State<Guide> {
       }
     }
   }
+
+  // Future<void> _shareTemplateContent(Template template) async {
+  //   // Construct the text content from the template
+  //   final StringBuffer shareTextBuffer = StringBuffer();
+  //   shareTextBuffer.writeln('Template Name: ${template.name}\n');
+  //   shareTextBuffer.writeln('Items:');
+  //   for (String item in template.items) {
+  //     shareTextBuffer.writeln('- $item');
+  //   }
+
+  //   final String shareText = shareTextBuffer.toString();
+  //   List<XFile> filesToShare = [];
+
+  //   // Check if an image path exists and the file is present
+  //   if (template.imagePath != null && template.imagePath!.isNotEmpty) {
+  //     final File imageFile = File(template.imagePath!);
+  //     if (await imageFile.exists()) {
+  //       filesToShare.add(XFile(imageFile.path));
+  //       developer.log('Sharing template image: ${imageFile.path}');
+  //     } else {
+  //       developer.log('Template image file not found: ${imageFile.path}');
+  //     }
+  //   } else {
+  //     developer.log('No image path for template: ${template.name}');
+  //   }
+
+  //   try {
+  //     if (filesToShare.isNotEmpty) {
+  //       await Share.shareXFiles(filesToShare,
+  //           text: shareText, subject: 'Template: ${template.name}');
+  //     } else {
+  //       // If no image, just share the text
+  //       await Share.share(shareText, subject: 'Template: ${template.name}');
+  //     }
+  //     developer.log('Template content shared successfully.');
+  //   } catch (e) {
+  //     developer.log('Error sharing template content: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('分享模板失败: $e')),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -288,15 +332,14 @@ class _GuideState extends State<Guide> {
                   Icon(
                     Icons.folder_open,
                     size: 80,
-                    color:
-                        currentTheme.colorScheme.onBackground.withOpacity(0.4),
+                    color: currentTheme.colorScheme.onSurface
+                        .withValues(alpha: 90),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '暂无模板，点击右上角加号创建',
                     style: currentTheme.textTheme.titleMedium?.copyWith(
-                      color: currentTheme.colorScheme.onBackground
-                          .withOpacity(0.6),
+                      color: currentTheme.colorScheme.onSurface.withAlpha(90),
                     ),
                   ),
                 ],
@@ -371,8 +414,8 @@ class _GuideState extends State<Guide> {
                               developer.log(
                                   '图片加载失败: ${template.imagePath}, 错误: $error');
                               return Container(
-                                color: theme
-                                    .colorScheme.surfaceVariant, // 错误时显示一个背景色
+                                color: theme.colorScheme
+                                    .surfaceContainerHighest, // 错误时显示一个背景色
                                 child: Center(
                                   child: Icon(
                                     Icons.broken_image,

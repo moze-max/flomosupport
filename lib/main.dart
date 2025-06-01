@@ -1,4 +1,3 @@
-import 'package:flomosupport/components/getAvataImage.dart';
 import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
