@@ -1,14 +1,14 @@
 import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-class Share extends StatefulWidget {
-  const Share({super.key});
+class Sharelist extends StatefulWidget {
+  const Sharelist({super.key});
 
   @override
-  State<Share> createState() => _ShareState();
+  State<Sharelist> createState() => _ShareState();
 }
 
-class _ShareState extends State<Share> {
+class _ShareState extends State<Sharelist> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;

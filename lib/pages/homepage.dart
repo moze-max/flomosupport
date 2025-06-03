@@ -1,6 +1,7 @@
 import 'package:flomosupport/pages/user_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
+import 'package:flomosupport/pages/getimageshare.dart';
 import 'article.dart';
 import 'guide.dart';
 
@@ -19,8 +20,9 @@ class HomePageState extends State<Homepage> {
   void initState() {
     super.initState();
     _pages = [
-      Guide(scaffoldKey: _scaffoldKey), // Pass the key
-      Article(scaffoldKey: _scaffoldKey), // Pass the key
+      Guide(scaffoldKey: _scaffoldKey),
+      Article(scaffoldKey: _scaffoldKey),
+      ShareImageWithTemplatePage()
     ];
   }
 
@@ -76,6 +78,7 @@ class HomePageState extends State<Homepage> {
               label: appLocalizations.articlePageTitle,
               tooltip: appLocalizations.articlePageTitle,
             ),
+            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'getImage')
           ],
           onTap: onTabChanged,
         ),

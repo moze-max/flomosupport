@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.flomosupport"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.1.12297006"
 
     compileOptions {
         // Correct syntax for Kotlin DSL

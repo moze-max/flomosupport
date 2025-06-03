@@ -5,7 +5,7 @@ import 'package:flomosupport/pages/article/AccountSecurity.dart';
 import 'package:flomosupport/pages/article/privacy/info.dart';
 import 'package:flomosupport/pages/article/privacy/privacy_tip.dart';
 import 'package:flomosupport/pages/article/privacy/security.dart';
-import 'package:flomosupport/pages/article/privacy/share.dart';
+import 'package:flomosupport/pages/article/privacy/sharelist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
@@ -379,7 +379,7 @@ class _ArticleState extends State<Article> {
               // 导航到第三方共享清单
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Share()),
+                MaterialPageRoute(builder: (context) => const Sharelist()),
               );
             },
           ),
