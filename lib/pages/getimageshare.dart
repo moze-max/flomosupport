@@ -135,21 +135,6 @@ import 'dart:developer' as developer;
 import 'package:flomosupport/models/sharemodel.dart'; // 假设这个文件在 lib/templates 目录下
 import 'package:flomosupport/components/sharemodel.dart'; // 假设这个文件在 lib/models 目录下
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '分享图片模板示例',
-      theme: ThemeData.light(),
-      home: ShareImageWithTemplatePage(),
-    );
-  }
-}
-
 class ShareImageWithTemplatePage extends StatefulWidget {
   const ShareImageWithTemplatePage({super.key});
 
@@ -284,30 +269,31 @@ class ShareImageWithTemplatePageState
       // 确保渲染完成，特别是对于可能需要加载网络图片或其他异步内容的模板
       // 这里可以添加延迟或等待图片加载完成的逻辑
       await Future.delayed(const Duration(milliseconds: 100)); // 简单延迟，等待渲染
+      if (mounted) {
+        ui.Image image = await boundary.toImage(
+            pixelRatio: MediaQuery.of(context).devicePixelRatio);
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
 
-      ui.Image image = await boundary.toImage(
-          pixelRatio: MediaQuery.of(context).devicePixelRatio);
-      ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+        if (byteData == null) {
+          developer.log('无法获取字节数据');
+          return;
+        }
 
-      if (byteData == null) {
-        developer.log('无法获取字节数据');
-        return;
+        Uint8List pngBytes = byteData.buffer.asUint8List();
+        final Directory tempDir = await getTemporaryDirectory();
+        final File imageFile = File('${tempDir.path}/screenshot.png');
+        await imageFile.writeAsBytes(pngBytes);
+
+        final List<XFile> files = [XFile(imageFile.path)];
+
+        SharePlus.instance.share(ShareParams(
+          text: '看看我在应用里发现的这个！',
+          files: files,
+        ));
+
+        developer.log('截图并分享成功: ${imageFile.path}');
       }
-
-      Uint8List pngBytes = byteData.buffer.asUint8List();
-      final Directory tempDir = await getTemporaryDirectory();
-      final File imageFile = File('${tempDir.path}/screenshot.png');
-      await imageFile.writeAsBytes(pngBytes);
-
-      final List<XFile> files = [XFile(imageFile.path)];
-
-      SharePlus.instance.share(ShareParams(
-        text: '看看我在应用里发现的这个！',
-        files: files,
-      ));
-
-      developer.log('截图并分享成功: ${imageFile.path}');
     } catch (e) {
       developer.log('截图或分享失败: $e');
       if (mounted) {

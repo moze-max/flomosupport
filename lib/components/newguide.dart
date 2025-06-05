@@ -276,7 +276,7 @@ class NewguideState extends State<Newguide> {
 
   List<Template> _templates = [];
   final TextEditingController _nameController = TextEditingController();
-  List<String> _useritems = [];
+  final List<String> _useritems = [];
   File? _pickedImage; // 用于存储用户选择的图片文件
 
   @override
@@ -432,131 +432,132 @@ class NewguideState extends State<Newguide> {
   @override
   Widget build(BuildContext context) {
     final ThemeData currentTheme = Theme.of(context);
-    final bool canPop = Navigator.of(context).canPop(); // 用于 AppBar 返回按钮
+    final bool canPop = Navigator.of(context).canPop();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('新建模板'),
         centerTitle: true,
-        // 根据 canPop 动态显示 leading 按钮
         leading: canPop
             ? IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new),
                 onPressed: () {
-                  Navigator.pop(context); // 返回上一页
+                  Navigator.pop(context);
                 },
               )
-            : null, // 在这里，Newguide 页面通常是从 Guide 页面 push 出来的，所以理论上 canPop 总是 true
+            : null,
         backgroundColor: currentTheme.appBarTheme.backgroundColor,
         foregroundColor: currentTheme.appBarTheme.foregroundColor,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '添加模板',
-                  style: currentTheme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: currentTheme.colorScheme.onSurface,
+      // --- MODIFICATION START ---
+      body: SingleChildScrollView(
+        // Allow the whole page to scroll if needed
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), // Apply overall padding
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Take minimum space
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '添加模板',
+                style: currentTheme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: currentTheme.colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: '模板名称',
+                  border: const OutlineInputBorder(),
+                  labelStyle:
+                      TextStyle(color: currentTheme.colorScheme.onSurface),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: currentTheme.colorScheme.outline),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: currentTheme.colorScheme.primary, width: 2),
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: '模板名称',
-                    border: const OutlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: currentTheme.colorScheme.onSurface),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: currentTheme.colorScheme.outline),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: currentTheme.colorScheme.primary, width: 2),
+                style: TextStyle(color: currentTheme.colorScheme.onSurface),
+              ),
+              const SizedBox(height: 16),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: currentTheme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: currentTheme.colorScheme.outline,
+                      width: 1,
                     ),
                   ),
-                  style: TextStyle(color: currentTheme.colorScheme.onSurface),
-                ),
-                const SizedBox(height: 16),
-                // 图片上传区域
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: currentTheme.colorScheme.surfaceVariant, // 浅色背景
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: currentTheme.colorScheme.outline,
-                        width: 1,
-                      ),
-                    ),
-                    child: _pickedImage != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              _pickedImage!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
+                  child: _pickedImage != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            _pickedImage!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image,
+                              size: 50,
+                              color: currentTheme.colorScheme.onSurfaceVariant,
                             ),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.image,
-                                size: 50,
+                            const SizedBox(height: 8),
+                            Text(
+                              '点击选择封面图片',
+                              style:
+                                  currentTheme.textTheme.bodyMedium?.copyWith(
                                 color:
                                     currentTheme.colorScheme.onSurfaceVariant,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '点击选择封面图片',
-                                style:
-                                    currentTheme.textTheme.bodyMedium?.copyWith(
-                                  color:
-                                      currentTheme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Card(
-                elevation: 4,
-                color: currentTheme.colorScheme.surface, // 卡片背景色
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: _useritems.isEmpty
-                      ? Center(
-                          child: Text(
-                            '暂未添加任何条目',
-                            style: currentTheme.textTheme.bodyMedium?.copyWith(
-                              color: currentTheme.colorScheme.onSurface
-                                  .withOpacity(0.5),
                             ),
-                          ),
-                        )
-                      : Scrollbar(
-                          child: ListView.builder(
-                            primary: true,
+                          ],
+                        ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Apply a fixed height to the Card here
+              SizedBox(
+                height: 200, // <--- Set your desired fixed height here
+                child: Card(
+                  elevation: 4,
+                  color: currentTheme.colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: _useritems.isEmpty
+                        ? Center(
+                            child: Text(
+                              '暂未添加任何条目',
+                              style:
+                                  currentTheme.textTheme.bodyMedium?.copyWith(
+                                color: currentTheme.colorScheme.onSurface
+                                    .withAlpha(178),
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            // Important: Nested ListView with fixed height container
+                            shrinkWrap:
+                                true, // Only take space needed by children
+                            primary: false, // Not the primary scroll view
+                            physics:
+                                const AlwaysScrollableScrollPhysics(), // Allow list to scroll if its content overflows fixed height
                             itemCount: _useritems.length,
                             itemBuilder: (context, index) {
                               final item = _useritems[index];
@@ -579,119 +580,128 @@ class NewguideState extends State<Newguide> {
                               );
                             },
                           ),
-                        ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _showAddItemDialog(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          currentTheme.colorScheme.secondary, // 添加条目按钮颜色
-                      foregroundColor:
-                          currentTheme.colorScheme.onSecondary, // 文字颜色
+              const SizedBox(
+                  height: 16), // Add spacing after the fixed-height card
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => _showAddItemDialog(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentTheme.colorScheme.secondary,
+                        foregroundColor: currentTheme.colorScheme.onSecondary,
+                      ),
+                      child: const Text('添加条目'),
                     ),
-                    child: const Text('添加条目'),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _saveTemplate,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          currentTheme.colorScheme.primary, // 保存模板按钮颜色
-                      foregroundColor:
-                          currentTheme.colorScheme.onPrimary, // 文字颜色
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _saveTemplate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentTheme.colorScheme.primary,
+                        foregroundColor: currentTheme.colorScheme.onPrimary,
+                      ),
+                      child: const Text('保存模板'),
                     ),
-                    child: const Text('保存模板'),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+      // --- MODIFICATION END ---
     );
   }
 
   Future<void> _showAddItemDialog(BuildContext context) async {
-    final itemsInputController = TextEditingController();
     await showDialog(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text('添加条目',
+        final itemsInputController =
+            TextEditingController(); // Controller created here
+        try {
+          return AlertDialog(
+            title: Text('添加条目',
+                style: TextStyle(
+                    color: Theme.of(dialogContext).colorScheme.onSurface)),
+            content: TextField(
+              controller: itemsInputController,
+              decoration: InputDecoration(
+                labelText: '条目内容',
+                labelStyle: TextStyle(
+                    color: Theme.of(dialogContext)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7)),
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Theme.of(dialogContext).colorScheme.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Theme.of(dialogContext).colorScheme.primary,
+                      width: 2),
+                ),
+              ),
               style: TextStyle(
-                  color: Theme.of(dialogContext).colorScheme.onSurface)),
-          content: TextField(
-            controller: itemsInputController,
-            decoration: InputDecoration(
-              labelText: '条目内容',
-              labelStyle: TextStyle(
-                  color: Theme.of(dialogContext)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.7)),
-              border: const OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Theme.of(dialogContext).colorScheme.outline),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color: Theme.of(dialogContext).colorScheme.primary,
-                    width: 2),
-              ),
+                  color: Theme.of(dialogContext).colorScheme.onSurface),
+              autofocus: true,
             ),
-            style:
-                TextStyle(color: Theme.of(dialogContext).colorScheme.onSurface),
-            autofocus: true,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text('取消',
-                  style: TextStyle(
-                      color: Theme.of(dialogContext).colorScheme.onSurface)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (itemsInputController.text.isNotEmpty) {
-                  setState(() {
-                    _useritems.add(itemsInputController.text.trim());
-                  });
+            actions: [
+              TextButton(
+                onPressed: () {
                   Navigator.pop(dialogContext);
-                } else {
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    SnackBar(
-                        content: Text('条目内容不能为空！',
-                            style: TextStyle(
-                                color: Theme.of(dialogContext)
-                                    .colorScheme
-                                    .onError))),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(dialogContext).colorScheme.primary,
-                foregroundColor: Theme.of(dialogContext).colorScheme.onPrimary,
+                },
+                child: Text('取消',
+                    style: TextStyle(
+                        color: Theme.of(dialogContext).colorScheme.onSurface)),
               ),
-              child: const Text('保存'),
-            ),
-          ],
-        );
+              ElevatedButton(
+                onPressed: () {
+                  if (itemsInputController.text.isNotEmpty) {
+                    setState(() {
+                      _useritems.add(itemsInputController.text.trim());
+                    });
+                    Navigator.pop(dialogContext);
+                  } else {
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      SnackBar(
+                          content: Text('条目内容不能为空！',
+                              style: TextStyle(
+                                  color: Theme.of(dialogContext)
+                                      .colorScheme
+                                      .onError))),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(dialogContext).colorScheme.primary,
+                  foregroundColor:
+                      Theme.of(dialogContext).colorScheme.onPrimary,
+                ),
+                child: const Text('保存'),
+              ),
+            ],
+          );
+        } finally {
+          // This block ensures the controller is disposed right after the dialog is built
+          // and removed from the tree, whether by pop, or back button, or tap outside.
+          // This is a robust way to ensure disposal.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!dialogContext.mounted && itemsInputController.hasListeners) {
+              itemsInputController.dispose();
+            }
+          });
+        }
       },
     );
-    // 这里释放控制器，因为对话框关闭后，它就不再需要了
-    itemsInputController.dispose();
   }
 
   @override
