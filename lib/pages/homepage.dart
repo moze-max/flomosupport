@@ -1,29 +1,31 @@
 import 'package:flomosupport/pages/user_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
-import 'package:flomosupport/pages/getimageshare.dart';
-import 'article.dart';
-import 'guide.dart';
+// import 'package:flomosupport/pages/getimageshare.dart';
+// import 'article.dart';
+// import 'guide.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  final List<Widget> pages;
+  final GlobalKey<ScaffoldState> homepagekey;
+  const Homepage({
+    super.key,
+    required this.pages,
+    required this.homepagekey,
+  });
   @override
   HomePageState createState() => HomePageState();
 }
 
 class HomePageState extends State<Homepage> {
   int currentindex = 0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  late final List<Widget> _pages;
+  late List<Widget> _pages;
   @override
   void initState() {
     super.initState();
-    _pages = [
-      Guide(scaffoldKey: _scaffoldKey),
-      Article(scaffoldKey: _scaffoldKey),
-      ShareImageWithTemplatePage()
-    ];
+    _pages = widget.pages;
   }
 
   void onTabChanged(int index) {
@@ -48,7 +50,7 @@ class HomePageState extends State<Homepage> {
 
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
-      key: _scaffoldKey,
+      key: widget.homepagekey,
       drawerEnableOpenDragGesture: true,
       // 设置抽屉打开时主页面的蒙版颜色和透明度
       drawerScrimColor: Colors.black54, // 黑色半透明蒙版
@@ -78,7 +80,8 @@ class HomePageState extends State<Homepage> {
               label: appLocalizations.articlePageTitle,
               tooltip: appLocalizations.articlePageTitle,
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'getImage')
+            BottomNavigationBarItem(
+                icon: Icon(Icons.abc), label: 'getImage', tooltip: 'getImage')
           ],
           onTap: onTabChanged,
         ),

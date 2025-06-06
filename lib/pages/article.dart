@@ -1,3 +1,5 @@
+import 'package:flomosupport/components/settings_list_item.dart';
+import 'package:flomosupport/components/settings_section_header.dart';
 import 'package:flomosupport/pages/article/APIkey.dart';
 import 'package:flomosupport/pages/article/GeneralSettings.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
@@ -19,6 +21,7 @@ class Article extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   State<Article> createState() => _ArticleState();
+  static const Key endOfArticlePage = Key('keyOfEndOfArticlePage');
 }
 
 class _ArticleState extends State<Article> {
@@ -183,12 +186,11 @@ class _ArticleState extends State<Article> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      body: Column(
         children: [
           Padding(
             padding:
-                const EdgeInsets.only(bottom: 24.0, left: 10.0, right: 16.0),
+                const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 16.0),
             child: TextField(
               decoration: InputDecoration(
                 hintText: appLocalizations.searchHint,
@@ -204,198 +206,171 @@ class _ArticleState extends State<Article> {
               },
             ),
           ),
-
-          // --- 账户与安全部分 ---
-          ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: Text(appLocalizations.accountAndSecurity),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+          Expanded(
+            child: ListView(
+              key: const Key('mainSettingsScrollView'),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundImage: _localAvatarFile != null
-                      ? FileImage(_localAvatarFile!)
-                      : null,
-                  child: _localAvatarFile == null
-                      ? const Icon(Icons.account_circle,
-                          size: 28, color: Colors.grey)
-                      : null,
+                // --- 账户与安全部分 ---
+                SettingsListItem(
+                  key: const Key('accountAndSecurityItem'),
+                  icon: Icons.person_outline,
+                  title: appLocalizations.accountAndSecurity,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundImage: _localAvatarFile != null
+                            ? FileImage(_localAvatarFile!)
+                            : null,
+                        child: _localAvatarFile == null
+                            ? const Icon(Icons.account_circle,
+                                size: 28, color: Colors.grey)
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.keyboard_arrow_right),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AccountsecurityPage()));
+                  },
                 ),
-                const SizedBox(width: 8),
-                const Icon(Icons.keyboard_arrow_right),
+                const Divider(),
+
+                // --- 功能部分 ---
+                SettingsSectionHeader(
+                    title: appLocalizations.functionsSectionTitle),
+                SettingsListItem(
+                  key: const Key('messageNotificationsItem'),
+                  icon: Icons.notifications_none,
+                  title: appLocalizations.messageNotifications,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Notificationsetting()),
+                    );
+                  },
+                ),
+                SettingsListItem(
+                  key: const Key('modeSelectionItem'),
+                  icon: Icons.color_lens_outlined,
+                  title: appLocalizations.modeSelection,
+                  trailing: Text(appLocalizations.normalMode),
+                  onTap: () {
+                    // 导航到模式选择设置
+                  },
+                ),
+                SettingsListItem(
+                  key: const Key('personalizationItem'),
+                  icon: Icons.brush,
+                  title: appLocalizations.personalization,
+                  onTap: () {
+                    // 导航到个性装扮设置
+                  },
+                ),
+                SettingsListItem(
+                  key: const Key('generalSettingsItem'),
+                  icon: Icons.settings_outlined,
+                  title: appLocalizations.generalSettings,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Generalsettings()),
+                    );
+                  },
+                ),
+                const Divider(),
+
+                // --- 密钥设置部分 ---
+                SettingsSectionHeader(
+                    title: appLocalizations.apiKeySectionTitle),
+                SettingsListItem(
+                  key: const Key('currentSavedKeyItem'),
+                  icon: Icons.vpn_key_outlined,
+                  title: appLocalizations.currentSavedKey,
+                  subtitle: Text(
+                    savedKey != null && savedKey!.isNotEmpty
+                        ? appLocalizations.keyStatusSaved
+                        : appLocalizations.keyStatusNotSet,
+                    style: TextStyle(
+                      color: savedKey != null && savedKey!.isNotEmpty
+                          ? Colors.green[700]
+                          : Colors.red[700],
+                      fontSize: 12,
+                    ),
+                  ),
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ApiKeyManagementPage()),
+                    );
+                    _loadKey();
+                  },
+                ),
+                const Divider(),
+
+                // --- 隐私部分 ---
+                SettingsSectionHeader(
+                    title: appLocalizations.privacySectionTitle),
+                SettingsListItem(
+                  key: const Key('privacySettingsItem'),
+                  icon: Icons.privacy_tip_outlined,
+                  title: appLocalizations.privacySettings,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PrivacyTip()),
+                    );
+                  },
+                ),
+                SettingsListItem(
+                  key: const Key('personalInfoCollectionItem'),
+                  icon: Icons.info_outline,
+                  title: appLocalizations.personalInfoCollection,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Info()),
+                    );
+                  },
+                ),
+                SettingsListItem(
+                  key: const Key('thirdPartyInfoSharingItem'),
+                  icon: Icons.share_outlined,
+                  title: appLocalizations.thirdPartyInfoSharing,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Sharelist()),
+                    );
+                  },
+                ),
+                SettingsListItem(
+                  key: ValueKey('personalInfoProtectionItem'),
+                  icon: Icons.security,
+                  title: appLocalizations.personalInfoProtection,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Security()),
+                    );
+                  },
+                ),
+                const Divider(),
               ],
             ),
-            onTap: () {
-              // 导航到账户与安全页面
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AccountsecurityPage()));
-            },
           ),
-          const Divider(),
-
-          // --- 功能部分 ---
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              appLocalizations.functionsSectionTitle,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.notifications_none),
-            title: Text(appLocalizations.messageNotifications),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到消息通知设置
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Notificationsetting()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.color_lens_outlined),
-            title: Text(appLocalizations.modeSelection),
-            trailing: Text(appLocalizations.normalMode),
-            onTap: () {
-              // 导航到模式选择设置
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.brush),
-            title: Text(appLocalizations.personalization),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到个性装扮设置
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: Text(appLocalizations.generalSettings),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到通用设置
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const Generalsettings()),
-              );
-            },
-          ),
-          const Divider(),
-
-          // --- 密钥设置部分 ---
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              appLocalizations.apiKeySectionTitle, // "密钥管理"
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.vpn_key_outlined),
-            title: Text(appLocalizations.currentSavedKey), // "当前保存的密钥"
-            // 根据 savedKey 的状态显示内容
-            subtitle: Text(
-              savedKey != null && savedKey!.isNotEmpty
-                  ? appLocalizations.keyStatusSaved // "已保存"
-                  : appLocalizations.keyStatusNotSet, // "未设置"
-              style: TextStyle(
-                color: savedKey != null && savedKey!.isNotEmpty
-                    ? Colors.green[700]
-                    : Colors.red[700],
-                fontSize: 12,
-              ),
-            ),
-            trailing: const Icon(Icons.keyboard_arrow_right), // 右侧箭头
-            onTap: () async {
-              // 点击时导航到新的密钥管理页面
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ApiKeyManagementPage()),
-              );
-              _loadKey();
-            },
-          ),
-          const Divider(),
-          // --- 隐私部分 ---
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              appLocalizations.privacySectionTitle,
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // 隐私设置
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
-            title: Text(appLocalizations.privacySettings),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到隐私设置
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const PrivacyTip()),
-              );
-            },
-          ),
-
-          // 个人信息收集清单
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(appLocalizations.personalInfoCollection),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到个人信息收集清单
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Info()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.share_outlined),
-            title: Text(appLocalizations.thirdPartyInfoSharing),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到第三方共享清单
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Sharelist()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.security),
-            title: Text(appLocalizations.personalInfoProtection),
-            trailing: const Icon(Icons.keyboard_arrow_right),
-            onTap: () {
-              // 导航到个人信息保护设置
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Security()),
-              );
-            },
-          ),
-          const Divider(),
         ],
       ),
     );

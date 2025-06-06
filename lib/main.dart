@@ -1,6 +1,7 @@
 import 'package:flomosupport/components/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
+import 'package:flomosupport/pages/getimageshare.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/pages/notification.dart' as ntfic;
 import 'package:flomosupport/l10n/app_localizations.dart';
@@ -10,13 +11,13 @@ import 'pages/guide.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await userAvatarNotifier.initialize();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  final GlobalKey<ScaffoldState> homepageScaffoldKey =
+      GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -41,7 +42,14 @@ class MyApp extends StatelessWidget {
         fontFamily: 'NotoSansSC',
       ),
       debugShowCheckedModeBanner: false,
-      home: Homepage(),
+      home: Homepage(
+        pages: [
+          Guide(scaffoldKey: homepageScaffoldKey), // Pass the key
+          Article(scaffoldKey: homepageScaffoldKey), // Pass the key
+          ShareImageWithTemplatePage(),
+        ],
+        homepagekey: homepageScaffoldKey,
+      ),
     );
   }
 }

@@ -13,10 +13,10 @@ class Guide extends StatefulWidget {
   const Guide({super.key, required this.scaffoldKey});
   final GlobalKey<ScaffoldState> scaffoldKey;
   @override
-  State<Guide> createState() => _GuideState();
+  State<Guide> createState() => GuideState();
 }
 
-class _GuideState extends State<Guide> {
+class GuideState extends State<Guide> {
   List<Template> templatesdata = [];
   final _fileName = 'templates.json';
   // final _imageDirName = 'guideimages'; // 图片文件夹名称，与 Newguide 保持一致
@@ -70,50 +70,6 @@ class _GuideState extends State<Guide> {
       }
     }
   }
-
-  // Future<void> _shareTemplateContent(Template template) async {
-  //   // Construct the text content from the template
-  //   final StringBuffer shareTextBuffer = StringBuffer();
-  //   shareTextBuffer.writeln('Template Name: ${template.name}\n');
-  //   shareTextBuffer.writeln('Items:');
-  //   for (String item in template.items) {
-  //     shareTextBuffer.writeln('- $item');
-  //   }
-
-  //   final String shareText = shareTextBuffer.toString();
-  //   List<XFile> filesToShare = [];
-
-  //   // Check if an image path exists and the file is present
-  //   if (template.imagePath != null && template.imagePath!.isNotEmpty) {
-  //     final File imageFile = File(template.imagePath!);
-  //     if (await imageFile.exists()) {
-  //       filesToShare.add(XFile(imageFile.path));
-  //       developer.log('Sharing template image: ${imageFile.path}');
-  //     } else {
-  //       developer.log('Template image file not found: ${imageFile.path}');
-  //     }
-  //   } else {
-  //     developer.log('No image path for template: ${template.name}');
-  //   }
-
-  //   try {
-  //     if (filesToShare.isNotEmpty) {
-  //       await Share.shareXFiles(filesToShare,
-  //           text: shareText, subject: 'Template: ${template.name}');
-  //     } else {
-  //       // If no image, just share the text
-  //       await Share.share(shareText, subject: 'Template: ${template.name}');
-  //     }
-  //     developer.log('Template content shared successfully.');
-  //   } catch (e) {
-  //     developer.log('Error sharing template content: $e');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('分享模板失败: $e')),
-  //       );
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -239,19 +195,6 @@ class _GuideState extends State<Guide> {
                             fit: BoxFit.cover, // 居中裁剪并填充
                             width: double.infinity,
                             height: double.infinity,
-                            // loadingBuilder: (context, child, loadingProgress) {
-                            //   if (loadingProgress == null) return child;
-                            //   return Center(
-                            //     child: CircularProgressIndicator(
-                            //       value: loadingProgress.expectedTotalBytes !=
-                            //               null
-                            //           ? loadingProgress.cumulativeBytesLoaded /
-                            //               loadingProgress.expectedTotalBytes!
-                            //           : null,
-                            //       color: theme.colorScheme.primary,
-                            //     ),
-                            //   );
-                            // },
                             errorBuilder: (context, error, stackTrace) {
                               developer.log(
                                   '图片加载失败: ${template.imagePath}, 错误: $error');
