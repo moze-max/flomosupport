@@ -15,7 +15,6 @@ class _SecurityState extends State<Security> {
   bool _qqMessageBannerEnabled = true;
   bool _doNotDisturbEnabled = false;
   bool _qqBirthdayReminderEnabled = true;
-  bool _groupMessageManagementEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -89,17 +88,13 @@ class _SecurityState extends State<Security> {
             _buildMenuItem(
               '声音',
               Icons.volume_up,
-              () {
-                print('点击了声音设置');
-              },
+              () {},
             ),
             _buildDivider(),
             _buildMenuItem(
               '振动',
               Icons.vibration,
-              () {
-                print('点击了振动设置');
-              },
+              () {},
             ),
             _buildDivider(),
             _buildToggleItem(
@@ -126,91 +121,15 @@ class _SecurityState extends State<Security> {
             ),
             _buildDivider(),
             _buildMenuItem(
-              '群消息通知管理',
-              Icons.people_alt_outlined,
-              () {
-                print('点击了群消息通知管理');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '好友消息通知管理',
-              Icons.person_outline,
-              () {
-                print('点击了好友消息通知管理');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '陌生人消息通知管理',
-              Icons.perm_identity,
-              () {
-                print('点击了陌生人消息通知管理');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
               '订阅号消息',
               Icons.rss_feed,
-              () {
-                print('点击了订阅号消息');
-              },
+              () {},
             ),
             _buildDivider(),
             _buildMenuItem(
               '特别关心',
               Icons.favorite_border,
-              () {
-                print('点击了特别关心');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '与我相关',
-              Icons.alternate_email,
-              () {
-                print('点击了与我相关');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '空间动态',
-              Icons.public,
-              () {
-                print('点击了空间动态');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '坦白说',
-              Icons.chat_outlined,
-              () {
-                print('点击了坦白说');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '小程序服务通知',
-              Icons.apps,
-              () {
-                print('点击了小程序服务通知');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '音视频通话',
-              Icons.videocam_outlined,
-              () {
-                print('点击了音视频通话');
-              },
-            ),
-            _buildDivider(),
-            _buildMenuItem(
-              '群课堂消息',
-              Icons.school_outlined,
-              () {
-                print('点击了群课堂消息');
-              },
+              () {},
             ),
           ],
         ),

@@ -5,12 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:flomosupport/pages/guide.dart'; // Adjust path if needed
-import 'package:flomosupport/models/guidemodel.dart'; // Adjust path if needed
-import 'package:flomosupport/l10n/app_localizations.dart'; // Adjust path if needed
-import 'package:flomosupport/l10n/app_localizations_en.dart'; // Assuming you have an English localization for testing
+import 'package:flomosupport/pages/guide.dart';
+import 'package:flomosupport/models/guidemodel.dart';
+import 'package:flomosupport/l10n/app_localizations.dart';
+import 'package:flomosupport/l10n/app_localizations_en.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:timezone/timezone.dart'; // Add mocktail to your pubspec.yaml dev_dependencies
 
 // Mock PathProviderPlatform
 class MockPathProviderPlatform extends Mock
@@ -49,10 +48,8 @@ class MockPathProviderPlatform extends Mock
   }
 }
 
-// Mock a File
 class MockFile extends Mock implements File {}
 
-// Mock a Directory
 class MockDirectory extends Mock implements Directory {}
 
 void verifybaseGuidePageUI(WidgetTester tester, AppLocalizations l10n,
@@ -60,18 +57,12 @@ void verifybaseGuidePageUI(WidgetTester tester, AppLocalizations l10n,
   expect(find.byType(AppBar), findsOneWidget);
   expect(find.text(l10n.guidePageTitle), findsOneWidget);
 
-  // 假设 Guide 页面在 Homepage 中时，其 AppBar 的 leading 按钮是菜单按钮
-  // 因为它是 Homepage 的第一个 Tab
   expect(find.byIcon(Icons.menu), findsOneWidget);
-  expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing); // 不应该有返回按钮
+  expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
 
   final addIconFinder = find.byIcon(Icons.add);
   expect(addIconFinder, findsOneWidget);
 
-  // 你可能需要确保 iconData 的颜色是来自 AppBarTheme
-  // final icon = tester.widget<Icon>(addIconFinder);
-  // expect(icon.color, Theme.of(tester.element(addIconFinder)).appBarTheme.foregroundColor);
-  // 在 Guide 页面测试中，我们模拟了文件不存在的场景，所以这里应该看到空状态
   expect(find.byIcon(Icons.folder_open), findsOneWidget);
   expect(find.text('暂无模板，点击右上角加号创建'), findsOneWidget);
 

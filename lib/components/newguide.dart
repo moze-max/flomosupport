@@ -192,13 +192,11 @@ class NewguideState extends State<Newguide> {
         backgroundColor: currentTheme.appBarTheme.backgroundColor,
         foregroundColor: currentTheme.appBarTheme.foregroundColor,
       ),
-      // --- MODIFICATION START ---
       body: SingleChildScrollView(
-        // Allow the whole page to scroll if needed
         child: Padding(
-          padding: const EdgeInsets.all(16.0), // Apply overall padding
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // Take minimum space
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -381,7 +379,7 @@ class NewguideState extends State<Newguide> {
                     color: Theme.of(dialogContext)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7)),
+                        .withAlpha(179)),
                 border: const OutlineInputBorder(),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
@@ -434,11 +432,8 @@ class NewguideState extends State<Newguide> {
             ],
           );
         } finally {
-          // This block ensures the controller is disposed right after the dialog is built
-          // and removed from the tree, whether by pop, or back button, or tap outside.
-          // This is a robust way to ensure disposal.
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (!dialogContext.mounted && itemsInputController.hasListeners) {
+            if (!dialogContext.mounted) {
               itemsInputController.dispose();
             }
           });

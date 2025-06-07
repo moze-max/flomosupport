@@ -24,7 +24,6 @@ class _PrivacyTipState extends State<PrivacyTip> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            // 示例 1: 基本的 ExpansionTile
             Card(
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: ExpansionTile(

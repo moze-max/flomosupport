@@ -13,20 +13,18 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         // 返回按钮
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
-            Navigator.pop(context); // 返回上一页
+            Navigator.pop(context);
           },
         ),
         title: const Text('个人信息收集清单'),
         centerTitle: true, // 标题居中
       ),
-      // backgroundColor: Colors.black, // 整个页面背景色也是黑色
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

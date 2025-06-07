@@ -6,12 +6,12 @@ import 'package:flomosupport/pages/article/privacy/security.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flomosupport/l10n/app_localizations.dart'; // Import your localizations
+import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'article_test.mocks.dart'; // Add mockito to your pubspec.yaml dev_dependencies
+import 'article_test.mocks.dart';
 
 @GenerateMocks([FlutterSecureStorage])
 class ExpectedSettingsItem {

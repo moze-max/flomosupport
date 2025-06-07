@@ -26,14 +26,6 @@ class MockArticle extends StatelessWidget {
   }
 }
 
-class MockShareImageWithTemplatePage extends StatelessWidget {
-  const MockShareImageWithTemplatePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Share Image Page Content'));
-  }
-}
-
 void main() {
   group('Homepage Widget Tests', () {
     final GlobalKey<ScaffoldState> testHomepageKey = GlobalKey<ScaffoldState>();
@@ -59,7 +51,6 @@ void main() {
             pages: [
               MockGuide(scaffoldKey: GlobalKey<ScaffoldState>()),
               MockArticle(scaffoldKey: GlobalKey<ScaffoldState>()),
-              const MockShareImageWithTemplatePage(),
             ],
           ),
         ),
@@ -79,11 +70,8 @@ void main() {
       // 使用 l10n 实例获取文本
       expect(find.text(l10n.bottomNavGuide), findsOneWidget);
       expect(find.text(l10n.articlePageTitle), findsOneWidget);
-      expect(find.text('getImage'), findsOneWidget); // 这个没有本地化
-
       expect(find.text('Guide Page Content'), findsOneWidget);
       expect(find.text('Article Page Content'), findsNothing);
-      expect(find.text('Share Image Page Content'), findsNothing);
     });
 
     testWidgets('Tapping on Article tab switches page (dynamic text)',
@@ -96,22 +84,10 @@ void main() {
 
       expect(find.text('Article Page Content'), findsOneWidget);
       expect(find.text('Guide Page Content'), findsNothing);
-      expect(find.text('Share Image Page Content'), findsNothing);
 
       final BottomNavigationBar bottomNav =
           tester.widget(find.byType(BottomNavigationBar));
       expect(bottomNav.currentIndex, 1);
-    });
-
-    testWidgets('Tapping on share tab switches page (dynamic text)',
-        (WidgetTester tester) async {
-      await pumpHomepage(tester);
-      await tester.tap(find.text('getImage'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Article Page Content'), findsNothing);
-      expect(find.text('Guide Page Content'), findsNothing);
-      expect(find.text('Share Image Page Content'), findsOneWidget);
     });
   });
   group('Standalone Guide Page GUI Tests (Using real Guide)', () {
