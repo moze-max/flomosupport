@@ -10,8 +10,7 @@ import 'package:flomosupport/models/guidemodel.dart';
 
 class GuideitemshareTemplate {
   final String name;
-  final Widget Function(BuildContext context, Template data)
-      builder; // <--- Takes your 'Template' data
+  final Widget Function(BuildContext context, Template data) builder;
 
   GuideitemshareTemplate({required this.name, required this.builder});
 }

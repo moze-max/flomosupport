@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:image_picker/image_picker.dart'; // 导入 image_picker
+import 'package:image_picker/image_picker.dart';
 import 'package:flomosupport/models/guidemodel.dart'; // 确保路径正确
-// import 'package:flomosupport/themes.dart'; // 导入你的主题文件，用于颜色和文本样式
 
 class Newguide extends StatefulWidget {
   const Newguide({super.key});
@@ -140,11 +139,6 @@ class NewguideState extends State<Newguide> {
       }
     }
 
-    // final newTemplate = Template(
-    //   name: _nameController.text.trim(),
-    //   items: List<dynamic>.from(_useritems),
-    //   imagePath: imagePath, // 将保存的图片路径赋值给模板
-    // );
     final newTemplate = Template.create(
         name: _nameController.text.trim(),
         items: List<dynamic>.from(_useritems),

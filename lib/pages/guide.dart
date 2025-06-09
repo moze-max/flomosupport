@@ -19,7 +19,6 @@ class Guide extends StatefulWidget {
 class GuideState extends State<Guide> {
   List<Template> templatesdata = [];
   final _fileName = 'templates.json';
-  // final _imageDirName = 'guideimages'; // 图片文件夹名称，与 Newguide 保持一致
 
   @override
   void initState() {

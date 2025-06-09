@@ -41,10 +41,8 @@ class HomePageState extends State<Homepage> {
 
     if (Theme.of(context).platform == TargetPlatform.android ||
         Theme.of(context).platform == TargetPlatform.iOS) {
-      // 例如，手机上抽屉宽度可以是屏幕宽度的 75%
       dynamicDrawerWidth = screenWidth * 0.75;
     } else {
-      // 在桌面或平板上，可能仍然保持屏幕一半，或者更大的固定值
       dynamicDrawerWidth = screenWidth * 0.5;
     }
 
