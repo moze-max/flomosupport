@@ -21,7 +21,7 @@ class _CurrentguideState extends State<Currentguide> {
   String? savedKey;
   late Map<String, TextEditingController> controllers;
   bool _isSubmitting = false;
-  final ApiService _apiService = ApiService();
+  final Future<ApiService> _apiServiceInstanceFuture = ApiService.create();
 
   @override
   void initState() {
@@ -119,7 +119,11 @@ class _CurrentguideState extends State<Currentguide> {
     String message = '提交失败';
 
     try {
-      success = await _apiService.sendData(formattedContent);
+      // success = await _apiService.sendData(formattedContent);
+      final ApiService apiService =
+          await _apiServiceInstanceFuture; // <--- 关键修改
+      success = await apiService
+          .sendData(formattedContent); // <--- 现在在实际的 ApiService 实例上调用
       if (success) {
         message = '发送成功！';
       }

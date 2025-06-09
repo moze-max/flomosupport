@@ -1,32 +1,13 @@
-// class Template {
-//   String name;
-//   List<dynamic> items;
-//   String? imagePath;
-
-//   Template({required this.name, this.items = const [], this.imagePath});
-
-//   Map<String, dynamic> toJson() {
-//     return {'name': name, 'items': items, 'imagePath': imagePath};
-//   }
-
-//   factory Template.fromJson(Map<String, dynamic> json) {
-//     return Template(
-//         name: json['name'], items: json['items'], imagePath: json['imagePath']);
-//   }
-// }
-
-// models/template.dart
-import 'package:uuid/uuid.dart'; // 导入 uuid 包
+import 'package:uuid/uuid.dart';
 
 class Template {
-  final String id; // <-- 添加 id 字段，通常设为 final
+  final String id;
   String name;
   List<dynamic> items;
   String? imagePath;
 
-  // 修改构造函数，id 应该是必须的
   Template({
-    required this.id, // <-- id 必须提供
+    required this.id,
     required this.name,
     this.items = const [],
     this.imagePath,
@@ -37,9 +18,9 @@ class Template {
     required String name,
     List<dynamic> items = const [],
     String? imagePath,
+    Uuid? uuidGenerator,
   }) {
-    // 生成一个 V4 UUID（随机生成）
-    final uuid = const Uuid();
+    final uuid = uuidGenerator ?? const Uuid();
     return Template(
       id: uuid.v4(), // 自动生成 UUID
       name: name,
@@ -48,7 +29,7 @@ class Template {
     );
   }
 
-  @override // 建议重写 hashCode 和 == 来正确比较模板对象
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Template && runtimeType == other.runtimeType && id == other.id;
@@ -58,7 +39,7 @@ class Template {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id, // <-- 添加 id
+      'id': id,
       'name': name,
       'items': items,
       'imagePath': imagePath,
@@ -67,7 +48,7 @@ class Template {
 
   factory Template.fromJson(Map<String, dynamic> json) {
     return Template(
-      id: json['id'] as String, // <-- 从 JSON 读取 id
+      id: json['id'] as String,
       name: json['name'] as String,
       // 确保 items 是 List<dynamic> 类型，如果直接是 List<String> 更好
       items: (json['items'] as List<dynamic>).map((e) => e).toList(),
