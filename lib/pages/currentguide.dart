@@ -1,5 +1,5 @@
 import 'dart:developer' as developer;
-import 'package:flomosupport/components/delete_guide_templates_dialog.dart';
+import 'package:flomosupport/components/dialog_components.dart';
 import 'package:flomosupport/components/show_snackbar.dart';
 import 'package:flomosupport/functions/api_service.dart';
 import 'package:flomosupport/functions/storage_service.dart';

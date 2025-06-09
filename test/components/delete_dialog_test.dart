@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 
 // Import the dialog function you want to test
-import 'package:flomosupport/components/delete_guide_templates_dialog.dart'; // Adjust this import path if needed
+import 'package:flomosupport/components/dialog_components.dart'; // Adjust this import path if needed
 
 void main() {
   group('showDeleteConfirmationDialog', () {
