@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:developer' as developer;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:flomosupport/models/guidemodel.dart'; // Import your Template model
+import 'package:flomosupport/models/guidemodel.dart';
 // You'll also need to import flutter/material.dart if _showSnackbar is called directly in StorageService
 // However, it's better to return the result and let the UI handle the snackbar.
 
@@ -56,12 +56,10 @@ class StorageService {
     try {
       List<Template> templatesList = await readTemplatesFromFile();
 
-      // Find the template to get its full data, especially imagePath
       Template? foundTemplate;
       int? foundIndex;
       for (int i = 0; i < templatesList.length; i++) {
-        // Use `name` as the unique identifier for finding the template
-        if (templatesList[i].name == templateToDelete.name) {
+        if (templatesList[i].id == templateToDelete.id) {
           foundTemplate = templatesList[i];
           foundIndex = i;
           break;
@@ -69,21 +67,17 @@ class StorageService {
       }
 
       if (foundTemplate == null) {
-        developer
-            .log("Template '${templateToDelete.name}' not found for deletion.");
+        developer.log(
+            "Template with ID '${templateToDelete.id}' not found for deletion.");
         return false;
       }
 
-      // Remove the template from the list
-      // Check if foundIndex is not null before using it
       if (foundIndex != null) {
         templatesList.removeAt(foundIndex);
       } else {
-        // Fallback for safety, though it should be found if foundTemplate is not null
-        templatesList.removeWhere((t) => t.name == templateToDelete.name);
+        templatesList.removeWhere((t) => t.id == templateToDelete.id);
       }
 
-      // If the template has an imagePath, try to delete the image file
       if (foundTemplate.imagePath != null &&
           foundTemplate.imagePath!.isNotEmpty) {
         final imageFile = File(foundTemplate.imagePath!);
@@ -93,10 +87,8 @@ class StorageService {
             developer.log(
                 "Associated image file deleted: ${foundTemplate.imagePath}");
           } catch (e) {
-            // Log the error but don't prevent template deletion if image deletion fails
             developer.log(
                 "Error deleting associated image file ${foundTemplate.imagePath}: $e");
-            // You might want to rethrow or handle this error differently based on strictness
           }
         } else {
           developer.log(
@@ -106,7 +98,7 @@ class StorageService {
 
       await writeTemplatesToFile(templatesList);
       developer.log(
-          "Template '${templateToDelete.name}' deleted successfully from local storage.");
+          "Template '${foundTemplate.name}' (ID: ${foundTemplate.id}) deleted successfully from local storage.");
       return true;
     } catch (e) {
       developer.log("Error deleting template locally: $e");

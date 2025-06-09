@@ -1,12 +1,11 @@
-import 'dart:io';
 import 'dart:developer' as developer;
+import 'package:flomosupport/components/show_snackbar.dart';
+import 'package:flomosupport/functions/storage_service.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:flomosupport/pages/guideitemshare.dart';
 
 class Currentguide extends StatefulWidget {
@@ -69,7 +68,9 @@ class _CurrentguideState extends State<Currentguide> {
                 ),
               );
               if (confirm == true) {
-                deleteTemplate();
+                // deleteTemplate();
+                // await StorageService.deleteTemplate(widget.template);
+                await _handleDeleteTemplate();
               }
             },
           ),
@@ -213,44 +214,62 @@ class _CurrentguideState extends State<Currentguide> {
     return false;
   }
 
-  Future<void> deleteTemplate() async {
-    final contextCopy = context;
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final dirPath = path.join(directory.path, 'flomosupport');
-      final file = File(path.join(dirPath, 'templates.json'));
+  // Future<void> deleteTemplate() async {
+  //   final contextCopy = context;
+  //   try {
+  //     final directory = await getApplicationDocumentsDirectory();
+  //     final dirPath = path.join(directory.path, 'flomosupport');
+  //     final file = File(path.join(dirPath, 'templates.json'));
 
-      if (!await file.exists()) {
-        throw Exception('Templates file does not exist');
-      }
+  //     if (!await file.exists()) {
+  //       throw Exception('Templates file does not exist');
+  //     }
 
-      final contents = await file.readAsString();
-      List<dynamic> templatesList = json.decode(contents);
+  //     final contents = await file.readAsString();
+  //     List<dynamic> templatesList = json.decode(contents);
 
-      templatesList.removeWhere(
-        (template) => template['name'] == widget.template.name,
-      );
+  //     templatesList.removeWhere(
+  //       (template) => template['name'] == widget.template.name,
+  //     );
 
-      await file.writeAsString(json.encode(templatesList));
+  //     await file.writeAsString(json.encode(templatesList));
 
-      developer.log("Template deleted successfully from local storage.");
+  //     developer.log("Template deleted successfully from local storage.");
 
-      if (contextCopy.mounted) {
-        ScaffoldMessenger.of(
-          contextCopy,
-        ).showSnackBar(const SnackBar(content: Text('模板已删除')));
+  //     if (contextCopy.mounted) {
+  //       ScaffoldMessenger.of(
+  //         contextCopy,
+  //       ).showSnackBar(const SnackBar(content: Text('模板已删除')));
 
+  //       if (contextCopy.mounted) {
+  //         Navigator.pop(contextCopy, true);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     developer.log("Error deleting template locally: $e");
+
+  //     if (contextCopy.mounted) {
+  //       ScaffoldMessenger.of(
+  //         contextCopy,
+  //       ).showSnackBar(const SnackBar(content: Text('删除模板失败')));
+  //     }
+  //   }
+  // }
+
+  Future<void> _handleDeleteTemplate() async {
+    final contextCopy = context; // Capture context before async operation
+
+    bool deleted = await StorageService.deleteTemplate(widget.template);
+
+    if (contextCopy.mounted) {
+      if (deleted) {
+        showSnackbar(contextCopy, '模板已删除');
+        // Pop the current route if deletion was successful
         if (contextCopy.mounted) {
           Navigator.pop(contextCopy, true);
         }
-      }
-    } catch (e) {
-      developer.log("Error deleting template locally: $e");
-
-      if (contextCopy.mounted) {
-        ScaffoldMessenger.of(
-          contextCopy,
-        ).showSnackBar(const SnackBar(content: Text('删除模板失败')));
+      } else {
+        showSnackbar(contextCopy, '删除模板失败', isError: true);
       }
     }
   }

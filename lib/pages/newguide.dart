@@ -140,11 +140,15 @@ class NewguideState extends State<Newguide> {
       }
     }
 
-    final newTemplate = Template(
-      name: _nameController.text.trim(),
-      items: List<dynamic>.from(_useritems),
-      imagePath: imagePath, // 将保存的图片路径赋值给模板
-    );
+    // final newTemplate = Template(
+    //   name: _nameController.text.trim(),
+    //   items: List<dynamic>.from(_useritems),
+    //   imagePath: imagePath, // 将保存的图片路径赋值给模板
+    // );
+    final newTemplate = Template.create(
+        name: _nameController.text.trim(),
+        items: List<dynamic>.from(_useritems),
+        imagePath: imagePath);
 
     setState(() {
       _templates.add(newTemplate); // 将新模板添加到总模板列表
