@@ -28,7 +28,6 @@ class SettingsListItem extends StatelessWidget {
           trailing: trailing ?? const Icon(Icons.keyboard_arrow_right),
           onTap: onTap,
         ),
-        // if (trailing == null || trailing is Icon) const Divider(),
       ],
     );
   }

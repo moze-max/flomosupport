@@ -1,7 +1,6 @@
 // 个人信息收集清单
 
 import 'package:flutter/material.dart';
-import 'package:flomosupport/l10n/app_localizations.dart';
 
 class Info extends StatefulWidget {
   const Info({super.key});

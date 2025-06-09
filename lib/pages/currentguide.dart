@@ -1,11 +1,11 @@
 import 'dart:developer' as developer;
+import 'package:flomosupport/components/delete_guide_templates_dialog.dart';
 import 'package:flomosupport/components/show_snackbar.dart';
+import 'package:flomosupport/functions/api_service.dart';
 import 'package:flomosupport/functions/storage_service.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flomosupport/pages/guideitemshare.dart';
 
 class Currentguide extends StatefulWidget {
@@ -21,21 +21,14 @@ class _CurrentguideState extends State<Currentguide> {
   String? savedKey;
   late Map<String, TextEditingController> controllers;
   bool _isSubmitting = false;
+  final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    _loadKey();
     controllers = {
       for (var item in widget.template.items) item: TextEditingController(),
     };
-  }
-
-  Future<void> _loadKey() async {
-    final key = await storage.read(key: 'APIkey');
-    setState(() {
-      savedKey = key;
-    });
   }
 
   @override
@@ -47,42 +40,21 @@ class _CurrentguideState extends State<Currentguide> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
-              final confirm = await showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('确认删除'),
-                  content: Text('确定要删除"${widget.template.name}"吗？此操作不可撤销。'),
-                  actions: [
-                    TextButton(
-                      child: Text('取消'),
-                      onPressed: () => Navigator.of(context).pop(false),
-                    ),
-                    TextButton(
-                      child: Text(
-                        '删除',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      onPressed: () => Navigator.of(context).pop(true),
-                    ),
-                  ],
-                ),
-              );
+              final bool? confirm = await showDeleteConfirmationDialog(
+                  context: context, template: widget.template);
+
               if (confirm == true) {
-                // deleteTemplate();
-                // await StorageService.deleteTemplate(widget.template);
                 await _handleDeleteTemplate();
               }
             },
           ),
           IconButton(
-            // onPressed: () => _shareTemplateContent(), icon: Icon(Icons.share)
             onPressed: () {
               Navigator.push(
-                context, // 'context' is essential for Navigator to work
+                context,
                 MaterialPageRoute(
                   builder: (context) => ShareImageWithTemplatePage(
-                    initialTemplateData: widget
-                        .template, // Make sure widget.template is accessible here
+                    initialTemplateData: widget.template,
                   ),
                 ),
               );
@@ -147,7 +119,7 @@ class _CurrentguideState extends State<Currentguide> {
     String message = '提交失败';
 
     try {
-      success = await sendData(formattedContent);
+      success = await _apiService.sendData(formattedContent);
       if (success) {
         message = '发送成功！';
       }
@@ -171,90 +143,6 @@ class _CurrentguideState extends State<Currentguide> {
       }
     }
   }
-
-  Future<bool> sendData(String data) async {
-    if (savedKey == null) {
-      developer.log("API Key 未加载或为空，无法发送请求。");
-      return false;
-    }
-
-    final url = Uri.parse('$savedKey');
-    int retryCount = 0;
-    const maxRetries = 3;
-
-    Map<String, dynamic> requestBody = {"content": data};
-
-    while (retryCount < maxRetries) {
-      try {
-        final response = await http.post(
-          url,
-          body: jsonEncode(requestBody),
-          headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        );
-
-        if (response.statusCode == 200) {
-          developer.log("Response:\n${response.body}");
-          return true;
-        } else {
-          developer
-              .log('请求失败，状态码: ${response.statusCode}, 响应体: ${response.body}');
-          throw Exception('Request failed with status: ${response.statusCode}');
-        }
-      } catch (e) {
-        retryCount++;
-        if (retryCount >= maxRetries) {
-          developer.log("达到最大重试次数，请求最终失败: $e");
-          return false;
-        }
-        developer.log(
-            "\n[警告] 上传失败，5秒后重试（剩余尝试次数：${maxRetries - retryCount}/$maxRetries）...");
-        await Future.delayed(const Duration(seconds: 5));
-      }
-    }
-    return false;
-  }
-
-  // Future<void> deleteTemplate() async {
-  //   final contextCopy = context;
-  //   try {
-  //     final directory = await getApplicationDocumentsDirectory();
-  //     final dirPath = path.join(directory.path, 'flomosupport');
-  //     final file = File(path.join(dirPath, 'templates.json'));
-
-  //     if (!await file.exists()) {
-  //       throw Exception('Templates file does not exist');
-  //     }
-
-  //     final contents = await file.readAsString();
-  //     List<dynamic> templatesList = json.decode(contents);
-
-  //     templatesList.removeWhere(
-  //       (template) => template['name'] == widget.template.name,
-  //     );
-
-  //     await file.writeAsString(json.encode(templatesList));
-
-  //     developer.log("Template deleted successfully from local storage.");
-
-  //     if (contextCopy.mounted) {
-  //       ScaffoldMessenger.of(
-  //         contextCopy,
-  //       ).showSnackBar(const SnackBar(content: Text('模板已删除')));
-
-  //       if (contextCopy.mounted) {
-  //         Navigator.pop(contextCopy, true);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     developer.log("Error deleting template locally: $e");
-
-  //     if (contextCopy.mounted) {
-  //       ScaffoldMessenger.of(
-  //         contextCopy,
-  //       ).showSnackBar(const SnackBar(content: Text('删除模板失败')));
-  //     }
-  //   }
-  // }
 
   Future<void> _handleDeleteTemplate() async {
     final contextCopy = context; // Capture context before async operation

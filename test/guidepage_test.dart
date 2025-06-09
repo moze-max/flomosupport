@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,9 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:flomosupport/pages/guide.dart';
-import 'package:flomosupport/models/guidemodel.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
-import 'package:flomosupport/l10n/app_localizations_en.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Mock PathProviderPlatform
@@ -140,19 +137,13 @@ void main() {
   TestWidgetsFlutterBinding
       .ensureInitialized(); // Required for services like path_provider
 
-  late MockPathProviderPlatform mockPathProvider;
-  late GlobalKey<ScaffoldState> scaffoldKey;
-  late AppLocalizations appLocalizations;
-
   setUpAll(() {
     // Register fallbacks for common types if you're using mocktail extensively
     registerFallbackValue(File(''));
     registerFallbackValue(Directory(''));
   });
 
-  setUp(() {
-    scaffoldKey = GlobalKey<ScaffoldState>();
-  });
+  setUp(() {});
 
   group('Guide Page Base UI Tests', () {
     base_UI_test();

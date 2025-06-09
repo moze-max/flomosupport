@@ -1,7 +1,5 @@
 import 'package:flomosupport/components/settings_list_item.dart';
 import 'package:flomosupport/pages/article.dart';
-import 'package:flomosupport/pages/article/AccountSecurity.dart';
-import 'package:flomosupport/pages/article/GeneralSettings.dart';
 import 'package:flomosupport/pages/article/privacy/security.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
