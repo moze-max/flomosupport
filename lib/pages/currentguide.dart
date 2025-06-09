@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flomosupport/pages/guideitemshare.dart';
 
 class Currentguide extends StatefulWidget {
@@ -212,49 +211,6 @@ class _CurrentguideState extends State<Currentguide> {
       }
     }
     return false;
-  }
-
-  Future<void> _shareTemplateContent() async {
-    final StringBuffer shareTextBuffer = StringBuffer();
-    shareTextBuffer.writeln('Template Name: ${widget.template.name}\n');
-    shareTextBuffer.writeln('Items:');
-    for (String item in widget.template.items) {
-      shareTextBuffer.writeln('- $item: ${controllers[item]?.text ?? ''}');
-    }
-
-    final String shareText = shareTextBuffer.toString();
-    List<XFile> filesToShare = [];
-
-    if (widget.template.imagePath != null &&
-        widget.template.imagePath!.isNotEmpty) {
-      final File imageFile = File(widget.template.imagePath!);
-      if (await imageFile.exists()) {
-        filesToShare.add(XFile(imageFile.path));
-        developer.log('Sharing template image: ${imageFile.path}');
-      } else {
-        developer.log('Template image file not found: ${imageFile.path}');
-      }
-    } else {
-      developer.log('No image path for template: ${widget.template.name}');
-    }
-
-    try {
-      if (filesToShare.isNotEmpty) {
-        await Share.shareXFiles(filesToShare,
-            text: shareText, subject: 'Template: ${widget.template.name}');
-      } else {
-        await Share.share(shareText,
-            subject: 'Template: ${widget.template.name}');
-      }
-      developer.log('Template content shared successfully.');
-    } catch (e) {
-      developer.log('Error sharing template content: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('分享模板失败: $e')),
-        );
-      }
-    }
   }
 
   Future<void> deleteTemplate() async {

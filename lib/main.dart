@@ -1,4 +1,4 @@
-import 'package:flomosupport/components/newguide.dart';
+import 'package:flomosupport/pages/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
 import 'package:flomosupport/pages/homepage.dart';

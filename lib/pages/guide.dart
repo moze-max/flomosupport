@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flomosupport/components/currentguide.dart';
-import 'package:flomosupport/components/newguide.dart';
+import 'package:flomosupport/pages/currentguide.dart';
+import 'package:flomosupport/pages/newguide.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/models/guidemodel.dart';
