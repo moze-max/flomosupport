@@ -162,8 +162,6 @@ class NewguideState extends State<Newguide> {
           backgroundColor: currentTheme.appBarTheme.backgroundColor,
           foregroundColor: currentTheme.appBarTheme.foregroundColor,
         ),
-        // body: SingleChildScrollView(
-        //   child: Padding(
         body: Column(
           children: [
             Expanded(
@@ -174,67 +172,6 @@ class NewguideState extends State<Newguide> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: LayoutBuilder(
-                    // mainAxisSize: MainAxisSize.min, // <-- 这里可能需要移除或调整
-                    // 因为我们想要拉伸，所以Column可能需要占据更多空间
-                    // 通常，如果SingleChildScrollView包裹Column，且Column包含Spacer，
-                    // Column的mainAxisSize默认为MainAxisSize.max，Spacer会填充剩余空间。
-                    // 但在SingleChildScrollView内部，Column的布局行为可能受限于其内容大小。
-                    // 更好的做法是让Column占据其父级（SingleChildScrollView的子级）的最大高度。
-                    // 要确保Column能拉伸到其父级的最大高度，需要确保其父级也有足够的空间。
-                    // 考虑将Padding直接作为Scaffold的body，然后内部使用Column+Expanded。
-
-                    // 暂时保留mainAxisSize: MainAxisSize.min，如果效果不对再移除
-                    // 让我们先尝试以下结构，它更常见：
-                    // Column作为Scaffold的直接body，然后处理溢出。
-
-                    // 临时移除 SingleChildScrollView 来测试 Spacer 效果
-                    // 如果内容溢出，再添加 SingleChildScrollView
-                    // crossAxisAlignment: CrossAxisAlignment.start, // 保持左对齐
-
-                    // *** 新的布局思路：将 Column 作为 Scaffold 的直接 body ***
-                    // 如果内容可能溢出屏幕，那么Column的父级需要有足够的空间来滚动。
-                    // 最简单的实现方式是：
-                    // Scaffold -> Column (Expanded if needed) -> 各个组件 -> Spacer -> 按钮 Row
-
-                    // 重新设计 body 部分，去除 SingleChildScrollView 的直接包裹，
-                    // 而是让 Column 填充所有可用空间，并内部处理滚动（如果需要）
-                    // 但是，您原有的 SingleChildScrollView 是为了处理内容过长时滚动。
-                    // 要达到“拉伸”且“底部”的效果，同时保留滚动，有点复杂。
-
-                    // 方案A: 弹性布局，内容部分可滚动
-                    // 这种方案是：Scaffold -> Column (填充高度) -> [可滚动的区域] -> Spacer -> [底部固定区域]
-                    // 这意味着你可能需要两个滚动区域或一个CustomScrollView。
-
-                    // 让我们假设你的内容不是总是很长以至于需要Scaffold级别的滚动，
-                    // 而是希望在“有空间”时拉伸。如果内容真的很高，那么按钮也会随着滚动而向上。
-                    // 如果您希望按钮永远在屏幕底部，不随内容滚动，那还是 bottomNavigationBar 更好。
-                    // “当屏幕的高度超过一定限度，元素的高度将会按照比例拉伸”
-                    // 意味着在足够大的屏幕上，内容会变高，把按钮推到屏幕的底部。
-
-                    // 最终决定：保留 SingleChildScrollView，但让其子级 Column 能够按需拉伸。
-                    // 这需要一个 `ConstrainedBox` 或 `LayoutBuilder` 来确保 `Column` 至少能占据屏幕高度。
-
-                    // **最简单的实现方式，无需复杂的高度计算，适用于您的场景：**
-                    // 将 Column 的 mainAxisSize 设置为 MainAxisSize.max，并包裹在一个可以获得最大高度的 Widget 中。
-                    // 或者更直接，将 `Column` 直接作为 `body`，并让其 `mainAxisAlignment` 变为 `spaceBetween`。
-                    // 但这样会导致内容直接分散，而不是拉伸特定部分。
-
-                    // **回到最初的理解，您想要的是在有额外空间时，页面内容（或一部分）填充这部分空间，从而让按钮在视觉上“保持在底部”**
-                    // 这最适合 `Column` + `Spacer` 组合，但要确保 `Column` 本身有足够的空间来拉伸。
-                    // 在 `Scaffold` 的 `body` 中，如果直接是一个 `Column`，它会尝试填充可用高度。
-                    // 但 `SingleChildScrollView` 会限制其子级 `Column` 的高度为内容所需高度。
-
-                    // 解决方案：将 `SingleChildScrollView` 嵌套在 `Expanded` 或 `SizedBox.expand` 中，
-                    // 并将 `Column` 的 `mainAxisSize` 设置为 `MainAxisSize.max`。
-
-                    // **修改为 Scaffold 的直接 body，并使用 Column 弹性布局：**
-
-                    // --- 放弃 SingleChildScrollView 直接包裹 Column 的简单方法，改为更灵活的方案 ---
-
-                    // 新的 body 结构
-                    // 利用 `LayoutBuilder` 来获取可用高度，然后强制 `Column` 至少占据这个高度
-                    // 这样 `Spacer` 才能工作
-
                     builder: (context, constraints) {
                       return IntrinsicHeight(
                         // 使得 Column 能够根据其 Expanded 子元素来决定高度
