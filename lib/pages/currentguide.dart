@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
-import 'package:flomosupport/components/dialog_components.dart';
-import 'package:flomosupport/components/show_snackbar.dart';
 import 'package:flomosupport/functions/api_service.dart';
-import 'package:flomosupport/functions/storage_service.dart';
+import 'package:flomosupport/functions/handle_delete_template.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -40,11 +38,14 @@ class _CurrentguideState extends State<Currentguide> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
-              final bool? confirm = await showDeleteConfirmationDialog(
-                  context: context, template: widget.template);
-
-              if (confirm == true) {
-                await _handleDeleteTemplate();
+              bool deletedSuccessfully = await handleDeleteTemplateLogic(
+                  context: context, templateToDelete: widget.template);
+              if (deletedSuccessfully) {
+                if (!context.mounted) {
+                  return;
+                }
+                Navigator.pop(context, true);
+                // 返回 true 给 Guide 页面，表示需要刷新
               }
             },
           ),
@@ -148,23 +149,23 @@ class _CurrentguideState extends State<Currentguide> {
     }
   }
 
-  Future<void> _handleDeleteTemplate() async {
-    final contextCopy = context; // Capture context before async operation
+  // Future<void> _handleDeleteTemplate() async {
+  //   final contextCopy = context;
 
-    bool deleted = await StorageService.deleteTemplate(widget.template);
+  //   bool deleted = await StorageService.deleteTemplate(widget.template);
 
-    if (contextCopy.mounted) {
-      if (deleted) {
-        showSnackbar(contextCopy, '模板已删除');
-        // Pop the current route if deletion was successful
-        if (contextCopy.mounted) {
-          Navigator.pop(contextCopy, true);
-        }
-      } else {
-        showSnackbar(contextCopy, '删除模板失败', isError: true);
-      }
-    }
-  }
+  //   if (contextCopy.mounted) {
+  //     if (deleted) {
+  //       showSnackbar(contextCopy, '模板已删除');
+  //       // Pop the current route if deletion was successful
+  //       if (contextCopy.mounted) {
+  //         Navigator.pop(contextCopy, true);
+  //       }
+  //     } else {
+  //       showSnackbar(contextCopy, '删除模板失败', isError: true);
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {

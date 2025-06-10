@@ -77,9 +77,7 @@ class HomePageState extends State<Homepage> {
               icon: Icon(Icons.article_outlined),
               label: appLocalizations.articlePageTitle,
               tooltip: appLocalizations.articlePageTitle,
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.abc), label: 'getImage', tooltip: 'getImage')
+            )
           ],
           onTap: onTabChanged,
         ),

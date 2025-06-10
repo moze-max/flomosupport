@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flomosupport/pages/currentguide.dart';
+import 'package:flomosupport/components/guide_card.dart';
 import 'package:flomosupport/pages/newguide.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
@@ -153,105 +153,13 @@ class GuideState extends State<Guide> {
               itemCount: templatesdata.length,
               itemBuilder: (context, index) {
                 final template = templatesdata[index];
-                return buildTemplateCard(template, currentTheme); // 传递主题数据
+                // return buildTemplateCard(template, currentTheme); // 传递主题数据
+                return TemplateCard(
+                    template: template,
+                    theme: currentTheme,
+                    onRefresh: loadTemplates);
               },
             ),
-    );
-  }
-
-  Widget buildTemplateCard(Template template, ThemeData theme) {
-    return InkWell(
-      onTap: () async {
-        final refresh = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Currentguide(template: template), // 传递模板数据
-          ),
-        );
-        if (refresh == true) {
-          await loadTemplates();
-        }
-      },
-      child: Card(
-        elevation: 4,
-        color: theme.colorScheme.surface, // 卡片背景色
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8)), // 圆角
-        clipBehavior: Clip.antiAlias, // 裁剪图片以适应圆角
-        child: Column(
-          children: [
-            Expanded(
-              child: template.imagePath != null &&
-                      template.imagePath!.isNotEmpty
-                  ? FutureBuilder<bool>(
-                      // 使用 FutureBuilder 确保图片文件存在再加载，避免 FileSystemException
-                      future: File(template.imagePath!).exists(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done &&
-                            snapshot.data == true) {
-                          return Image.file(
-                            File(template.imagePath!),
-                            fit: BoxFit.cover, // 居中裁剪并填充
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              developer.log(
-                                  '图片加载失败: ${template.imagePath}, 错误: $error');
-                              return Container(
-                                color: theme.colorScheme
-                                    .surfaceContainerHighest, // 错误时显示一个背景色
-                                child: Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    color: theme.colorScheme.error,
-                                    size: 48,
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          // 文件不存在或加载中，显示默认图标
-                          return Container(
-                            color:
-                                theme.colorScheme.primaryContainer, // 默认图标背景色
-                            child: Center(
-                              child: Icon(
-                                Icons.article, // 默认图标
-                                color: theme.colorScheme.onPrimaryContainer,
-                                size: 64,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    )
-                  : Container(
-                      color: theme.colorScheme.primaryContainer, // 默认图标背景色
-                      child: Center(
-                        child: Icon(
-                          Icons.article, // 默认图标
-                          color: theme.colorScheme.onPrimaryContainer,
-                          size: 64,
-                        ),
-                      ),
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                template.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface, // 确保文本颜色与背景对比明显
-                ),
-                maxLines: 1, // 限制名称只显示一行
-                overflow: TextOverflow.ellipsis, // 超出部分显示省略号
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
