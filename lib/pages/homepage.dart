@@ -19,7 +19,6 @@ class Homepage extends StatefulWidget {
 
 class HomePageState extends State<Homepage> {
   int currentindex = 0;
-  // final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late List<Widget> _pages;
   @override
@@ -50,8 +49,7 @@ class HomePageState extends State<Homepage> {
     return Scaffold(
       key: widget.homepagekey,
       drawerEnableOpenDragGesture: true,
-      // 设置抽屉打开时主页面的蒙版颜色和透明度
-      drawerScrimColor: Colors.black54, // 黑色半透明蒙版
+      drawerScrimColor: Colors.black54,
       drawer: Drawer(
         width: dynamicDrawerWidth,
         backgroundColor:

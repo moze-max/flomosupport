@@ -18,84 +18,410 @@ class GuideitemshareTemplate {
 // Dummy GuideitemshareTemplate builders for demonstration purposes
 // These functions will receive your 'Template' data object and build the UI.
 Widget _buildGuideitemshareTemplate1(BuildContext context, Template data) {
-  return Container(
-    padding: const EdgeInsets.all(20),
-    color: Colors.blue.shade100,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          data.name,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+  final double screenWidth = MediaQuery.of(context).size.width;
+  // Define a desired base width for the content, aiming for wider usage
+  final double contentWidth =
+      screenWidth * 0.85; // Now 85% of screen width for a slightly wider look
+
+  // Define proportions for elements relative to contentWidth
+  final double imageSize =
+      contentWidth * 0.4; // Image takes 40% of content width
+  final double titleMaxWidth =
+      contentWidth * 0.95; // Title can be almost full content width
+
+  // Define your custom black and gold colors
+  const Color backgroundColor = Colors.black; // Deep black background
+  const Color goldenBorderColor =
+      Color.fromARGB(255, 162, 128, 13); // Classic gold color
+  const Color goldenTextColor = Color(0xFFD4AF37); // Gold for title
+  const Color itemTextColor = Colors.white; // White for list items
+  const Color subtleFooterColor = Colors.grey; // Subtle grey for the footer
+
+  return Padding(
+    padding: const EdgeInsets.only(left: 16, right: 16),
+    child: Container(
+      // The outer container for the golden border effect
+      decoration: BoxDecoration(
+        color: backgroundColor, // Inner fill color
+        borderRadius: BorderRadius.circular(
+            15), // Slightly more rounded corners for the overall card
+        border: Border.all(
+          color: goldenBorderColor, // Golden border
+          width: 3, // Thicker golden border
         ),
-        if (data.imagePath != null && data.imagePath!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                // <--- Changed from Image.network to Image.file
-                File(data.imagePath!), // <--- Wrap the path in a File object
-                height: 120,
-                width: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.broken_image, size: 80),
+      ),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(
+          15), // Reduced padding here to give more space for inner content due to border
+      child: SizedBox(
+        width: contentWidth, // Use the calculated contentWidth here
+        child: Padding(
+          padding:
+              const EdgeInsets.all(8.0), // Padding inside the main content area
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Wrap content tightly
+            children: [
+              // Template Title
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: titleMaxWidth),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    data.name,
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: goldenTextColor, // Golden title text
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+
+              // Template Image (if available)
+              if (data.imagePath != null && data.imagePath!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.file(
+                      File(data.imagePath!),
+                      height: imageSize,
+                      width: imageSize,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        size: 100,
+                        color: Colors
+                            .grey, // Error icon can remain grey or match theme
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+
+              // Template Items
+              SizedBox(
+                width:
+                    contentWidth, // Ensure this inner Column takes the full contentWidth
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Align items to the start
+                  children: data.items
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(
+                            '- $item',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: itemTextColor, // White text for items
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Footer text "来自 FlomoSupport"
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  '来自 FlomoSupport',
+                  style: TextStyle(
+                      color: subtleFooterColor,
+                      fontSize: 10), // Subtle grey footer
+                ),
+              ),
+            ],
           ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: data.items
-              .map((item) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
-                    child:
-                        Text('- $item', style: const TextStyle(fontSize: 16)),
-                  ))
-              .toList(),
         ),
-      ],
+      ),
+    ),
+  );
+}
+// Ensure your Template model is imported
+
+Widget _buildGuideitemshareTemplate2(BuildContext context, Template data) {
+  final double screenWidth = MediaQuery.of(context).size.width;
+  // Define a desired base width for the content, aiming for wider usage
+  final double contentWidth =
+      screenWidth * 0.85; // Now 85% of screen width for a slightly wider look
+
+  // Define proportions for elements relative to contentWidth
+  final double imageSize =
+      contentWidth * 0.4; // Image takes 40% of content width
+  final double titleMaxWidth =
+      contentWidth * 0.95; // Title can be almost full content width
+
+  // Define your custom black and gold colors
+  // For the gradient, we'll define a list of colors
+  const Color gradientStartColor =
+      Color.fromARGB(255, 0, 0, 0); // Very dark grey/near black
+  const Color gradientEndColor =
+      Color.fromARGB(255, 60, 60, 60); // Slightly lighter dark grey
+  const Color goldenBorderColor = Color(0xFFD4AF37); // Classic gold color
+  const Color goldenTextColor = Color(0xFFD4AF37); // Gold for title
+  const Color itemTextColor = Colors.white; // White for list items
+  const Color subtleFooterColor = Colors.grey; // Subtle grey for the footer
+
+  return Padding(
+    padding: const EdgeInsets.only(left: 16, right: 16),
+    child: Container(
+      // The outer container for the gradient background and golden border
+      decoration: BoxDecoration(
+        // Use gradient instead of solid color
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft, // Gradient starts from top-left
+          end: Alignment.bottomRight, // Ends at bottom-right
+          colors: [
+            gradientStartColor,
+            gradientEndColor,
+          ],
+          // You can add stops for more control over color distribution
+          // stops: [0.0, 1.0], // Optional, default is even distribution
+        ),
+        borderRadius: BorderRadius.circular(
+            15), // Slightly more rounded corners for the overall card
+        border: Border.all(
+          color: goldenBorderColor, // Golden border
+          width: 3, // Thicker golden border
+        ),
+      ),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(
+          15), // Reduced padding here to give more space for inner content due to border
+      child: SizedBox(
+        width: contentWidth, // Use the calculated contentWidth here
+        child: Padding(
+          padding:
+              const EdgeInsets.all(8.0), // Padding inside the main content area
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Wrap content tightly
+            children: [
+              // Template Title
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: titleMaxWidth),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    data.name,
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: goldenTextColor, // Golden title text
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Template Image (if available)
+              if (data.imagePath != null && data.imagePath!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.file(
+                      File(data.imagePath!),
+                      height: imageSize,
+                      width: imageSize,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        size: 100,
+                        color: Colors
+                            .grey, // Error icon can remain grey or match theme
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+
+              // Template Items
+              SizedBox(
+                width:
+                    contentWidth, // Ensure this inner Column takes the full contentWidth
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Align items to the start
+                  children: data.items
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(
+                            '- $item',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: itemTextColor, // White text for items
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Footer text "来自 FlomoSupport"
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  '来自 FlomoSupport',
+                  style: TextStyle(
+                      color: subtleFooterColor,
+                      fontSize: 10), // Subtle grey footer
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }
 
-Widget _buildGuideitemshareTemplate2(BuildContext context, Template data) {
-  return Container(
-    padding: const EdgeInsets.all(20),
-    color: Colors.green.shade100,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          '${data.name} - Details',
-          style: const TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
-          textAlign: TextAlign.center,
+Widget _buildGuideitemshareTemplate3(BuildContext context, Template data) {
+  final double screenWidth = MediaQuery.of(context).size.width;
+  // Define a desired base width for the content, aiming for wider usage
+  final double contentWidth = screenWidth * 0.85; // 85% of screen width
+
+  // Define proportions for elements relative to contentWidth
+  final double imageSize =
+      contentWidth * 0.4; // Image takes 40% of content width
+  final double titleMaxWidth =
+      contentWidth * 0.95; // Title can be almost full content width
+
+  // Define your vibrant blue to pink gradient colors
+  const Color gradientStartColor =
+      Color(0xFF89CFF0); // A cheerful light blue (Baby Blue)
+  const Color gradientEndColor =
+      Color(0xFFF08080); // A soft coral pink (Light Coral)
+
+  // Text colors to complement the gradient
+  const Color titleTextColor =
+      Color(0xFF333333); // Dark grey/near black for good contrast
+  const Color itemTextColor =
+      Color(0xFF555555); // Slightly lighter dark grey for items
+  const Color subtleFooterColor =
+      Color.fromARGB(234, 3, 64, 68); // Even lighter grey for the footer
+
+  return Padding(
+    padding: const EdgeInsets.only(left: 16, right: 16),
+    child: Container(
+      // The outer container for the gradient background and a subtle border
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            gradientStartColor,
+            gradientEndColor,
+          ],
         ),
-        if (data.imagePath != null && data.imagePath!.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.file(
-                // <--- Changed from Image.network to Image.file
-                File(data.imagePath!), // <--- Wrap the path in a File object
-                height: 120,
-                width: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.broken_image, size: 80),
+        borderRadius: BorderRadius.circular(15),
+        // Adding a subtle border for definition, maybe a darker shade of the gradient start/end
+        border: Border.all(
+          color: gradientEndColor
+              .withOpacity(0.5), // A subtle border using the pink with opacity
+          width: 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(15),
+      child: SizedBox(
+        width: contentWidth,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Template Title
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: titleMaxWidth),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    data.name,
+                    style: const TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: titleTextColor, // Dark text for good contrast
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+
+              // Template Image (if available)
+              if (data.imagePath != null && data.imagePath!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.file(
+                      File(data.imagePath!),
+                      height: imageSize,
+                      width: imageSize,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        size: 100,
+                        color: Colors.grey, // Error icon remains neutral
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+
+              // Template Items
+              SizedBox(
+                width: contentWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: data.items
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Text(
+                            '- $item',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: itemTextColor, // Dark grey text for items
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Footer text "来自 FlomoSupport"
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  '来自 FlomoSupport',
+                  style: TextStyle(
+                      color: subtleFooterColor,
+                      fontSize: 10), // Light grey footer
+                ),
+              ),
+            ],
           ),
-        Wrap(
-          // Using Wrap for potentially many items
-          spacing: 8.0, // gap between adjacent chips
-          runSpacing: 4.0, // gap between lines
-          children:
-              data.items.map((item) => Chip(label: Text('$item'))).toList(),
         ),
-      ],
+      ),
     ),
   );
 }
@@ -103,19 +429,21 @@ Widget _buildGuideitemshareTemplate2(BuildContext context, Template data) {
 // Available GuideitemshareTemplates list
 final List<GuideitemshareTemplate> availableGuideitemshareTemplates = [
   GuideitemshareTemplate(
-    name: '奖励通知模板',
+    name: '黑金模板',
     builder: (context, data) => _buildGuideitemshareTemplate1(context, data),
   ),
   GuideitemshareTemplate(
-    name: '项目详情模板',
+    name: '渐变色背景',
     builder: (context, data) => _buildGuideitemshareTemplate2(context, data),
   ),
-  // Add more GuideitemshareTemplates as needed
+  GuideitemshareTemplate(
+    name: '渐变色背景',
+    builder: (context, data) => _buildGuideitemshareTemplate3(context, data),
+  ),
 ];
 
 class ShareImageWithTemplatePage extends StatefulWidget {
-  final Template
-      initialTemplateData; // <--- This now explicitly takes your 'Template' data
+  final Template initialTemplateData;
 
   const ShareImageWithTemplatePage(
       {super.key, required this.initialTemplateData});
@@ -129,15 +457,13 @@ class ShareImageWithTemplatePageState
     extends State<ShareImageWithTemplatePage> {
   final GlobalKey _repaintBoundaryKey = GlobalKey(); // Used for screenshot
 
-  late Template _currentTemplateData; // <--- Holds your 'Template' data
-  late GuideitemshareTemplate
-      _selectedGuideitemshareTemplate; // <--- Holds the selected visual layout/style
+  late Template _currentTemplateData;
+  late GuideitemshareTemplate _selectedGuideitemshareTemplate;
 
   @override
   void initState() {
     super.initState();
     _currentTemplateData = widget.initialTemplateData;
-    // Default to the first available visual template style
     _selectedGuideitemshareTemplate = availableGuideitemshareTemplates.first;
   }
 
@@ -173,7 +499,6 @@ class ShareImageWithTemplatePageState
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: DropdownButton<GuideitemshareTemplate>(
-                      // <--- Dropdown of GuideitemshareTemplate
                       isExpanded: true,
                       value: _selectedGuideitemshareTemplate,
                       onChanged: (GuideitemshareTemplate? newValue) {
@@ -204,8 +529,8 @@ class ShareImageWithTemplatePageState
                     key: _repaintBoundaryKey,
                     // Call the builder function of the currently selected GuideitemshareTemplate
                     // and pass it the _currentTemplateData (your original data model).
-                    child: _selectedGuideitemshareTemplate.builder(context,
-                        _currentTemplateData), // <--- Correctly passing 'Template' data
+                    child: _selectedGuideitemshareTemplate.builder(
+                        context, _currentTemplateData),
                   ),
                   const SizedBox(height: 30),
                 ],
