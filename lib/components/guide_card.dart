@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flomosupport/functions/handle_delete_template.dart';
+import 'package:flomosupport/pages/guideitemshare.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:developer' as developer;
@@ -61,6 +62,18 @@ class TemplateCard extends StatelessWidget {
           await handleDeleteTemplateLogic(
               context: context, templateToDelete: template);
           onRefresh();
+        } else if (value == 'share') {
+          if (!context.mounted) {
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShareImageWithTemplatePage(
+                initialTemplateData: template,
+              ),
+            ),
+          );
         }
       } else {
         developer.log('guide_card:长按按钮value为null!请进行检查');
