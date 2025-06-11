@@ -9,7 +9,7 @@ import 'package:flomosupport/models/guidemodel.dart';
 
 class StorageService {
   /// Retrieves the path to the templates file.
-  static Future<File> _getTemplatesFile() async {
+  static Future<File> getTemplatesFile() async {
     final directory = await getApplicationDocumentsDirectory();
     final dirPath = path.join(directory.path, 'flomosupport');
     // Ensure the directory exists
@@ -21,7 +21,7 @@ class StorageService {
   /// Returns a list of Template objects.
   /// Returns an empty list if the file does not exist or is empty.
   static Future<List<Template>> readTemplatesFromFile() async {
-    final file = await _getTemplatesFile();
+    final file = await getTemplatesFile();
     if (!await file.exists()) {
       developer.log("Templates file does not exist. Returning empty list.");
       return [];
@@ -40,9 +40,24 @@ class StorageService {
     }
   }
 
+  Future<List<Template>> loadTemplates() async {
+    try {
+      final file = await getTemplatesFile();
+      if (await file.exists()) {
+        final contents = await file.readAsString();
+        final List<dynamic> jsonList = json.decode(contents) as List;
+        return jsonList.map((json) => Template.fromJson(json)).toList();
+      }
+    } catch (e) {
+      developer.log('Error loading templates: $e');
+      // 可以在这里集成 showSnackbar 或其他错误处理
+    }
+    return []; // 如果文件不存在或发生错误，返回空列表
+  }
+
   /// Writes the given list of Template objects back to the local file.
   static Future<void> writeTemplatesToFile(List<Template> templates) async {
-    final file = await _getTemplatesFile();
+    final file = await getTemplatesFile();
     final List<Map<String, dynamic>> jsonList =
         templates.map((template) => template.toJson()).toList();
     await file.writeAsString(json.encode(jsonList));
@@ -102,6 +117,17 @@ class StorageService {
     } catch (e) {
       developer.log("Error deleting template locally: $e");
       return false;
+    }
+  }
+
+  Future<void> saveTemplates(List<Template> templates) async {
+    try {
+      final file = await getTemplatesFile();
+      final jsonList = templates.map((e) => e.toJson()).toList();
+      await file.writeAsString(json.encode(jsonList));
+    } catch (e) {
+      developer.log('Error saving templates: $e');
+      // 可以在这里集成 showSnackbar 或其他错误处理
     }
   }
 
