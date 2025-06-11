@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flomosupport/components/guide_card.dart';
+import 'package:flomosupport/components/show_snackbar.dart';
+import 'package:flomosupport/functions/class_items.dart';
+import 'package:flomosupport/functions/storage_service.dart';
 import 'package:flomosupport/pages/newguide.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/models/guidemodel.dart';
-import 'package:path/path.dart' as path;
 import 'dart:developer' as developer;
 import 'package:flomosupport/l10n/app_localizations.dart';
 
@@ -18,10 +17,11 @@ class Guide extends StatefulWidget {
 
 class GuideState extends State<Guide> {
   List<Template> templatesdata = [];
-  final _fileName = 'templates.json';
   // 新增的状态变量
   String? _selectedClassItem; // null 表示选中 "全部"
   List<String> _uniqueClassItems = []; // 存储所有不重复的 classItems
+  final StorageService _StorageService = StorageService();
+  final ClassItemService _classItemService = ClassItemService();
 
   @override
   void initState() {
@@ -31,69 +31,129 @@ class GuideState extends State<Guide> {
   }
 
   Future<void> _initializeData() async {
-    await loadTemplates(); // 等待模板数据加载完成
-    _extractUniqueClassItems(); // 数据加载完成后再提取分类
+    await _loadAllData();
   }
 
-  Future<void> loadTemplates() async {
+  Future<void> _loadAllData() async {
+    // 1. 从 TemplateService 加载模板数据
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final appDirPath = path.join(directory.path, 'flomosupport');
-      final dir = Directory(appDirPath);
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
-      }
-
-      final file = File(path.join(appDirPath, _fileName));
-      if (await file.exists()) {
-        developer.log("Attempting to read templates file.");
-        final contents = await file.readAsString();
-        final list = json.decode(contents);
-        if (list is! List) {
-          throw const FormatException('JSON内容不是列表类型');
-        }
-        if (mounted) {
-          setState(() {
-            templatesdata = list.map((e) => Template.fromJson(e)).toList();
-          });
-          developer.log("Successfully loaded templates data.");
-        }
-      } else {
-        developer
-            .log("Templates file does not exist, initializing empty list.");
+      final loadedTemplates = await _StorageService.loadTemplates();
+      if (mounted) {
         setState(() {
-          templatesdata = []; // 文件不存在时，初始化为空列表
+          templatesdata = loadedTemplates;
         });
-        _extractUniqueClassItems();
+        developer.log("Successfully loaded templates data from service.");
       }
     } catch (e) {
       developer.log('加载模板失败: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('加载模板失败: ${e.toString()}',
-                style: TextStyle(color: Theme.of(context).colorScheme.onError)),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        showSnackbar(context, '加载模板失败: ${e.toString()}', isError: true);
       }
-      _extractUniqueClassItems();
+      // 即使加载失败，也确保模板数据是空的，防止空指针
+      if (mounted) {
+        setState(() {
+          templatesdata = [];
+        });
+      }
+    }
+
+    // 2. 从 ClassItemService 加载分类数据
+    try {
+      final loadedClassItems = await _classItemService.loadClassItems();
+      if (mounted) {
+        setState(() {
+          _uniqueClassItems =
+              loadedClassItems; // ClassItemService 返回的是 List<String>，并保持顺序
+        });
+        developer.log("Successfully loaded class items from service.");
+      }
+    } catch (e) {
+      developer.log('加载分类失败: $e');
+      if (mounted) {
+        showSnackbar(context, '加载分类失败: ${e.toString()}', isError: true);
+      }
+      if (mounted) {
+        setState(() {
+          _uniqueClassItems = [];
+        });
+      }
+    }
+
+    // 确保在数据加载完成后，如果 class_items.json 为空，可以从现有模板中提取并保存
+    // 这一步最好在 NewguideState 保存模板时触发 ClassItemService 的更新，
+    // 但为了鲁棒性，在 Guide 页面首次加载时也可以检查并处理。
+    // 注意：如果 NewguideState 已经确保了 ClassItemService 的数据完整性，这里可以省略此检查。
+    if (_uniqueClassItems.isEmpty && templatesdata.isNotEmpty) {
+      await _classItemService.extractAndSaveFromTemplates(templatesdata);
+      // 重新加载以获取最新保存的分类
+      final reloadedClassItems = await _classItemService.loadClassItems();
+      if (mounted) {
+        setState(() {
+          _uniqueClassItems = reloadedClassItems;
+        });
+      }
     }
   }
 
-  void _extractUniqueClassItems() {
-    final Set<String> classItemsSet = {};
-    for (final template in templatesdata) {
-      if (template.classitems != null) {
-        for (final item in template.classitems!) {
-          classItemsSet.add(item);
-        }
-      }
-    }
-    setState(() {
-      _uniqueClassItems = classItemsSet.toList()..sort();
-    });
-  }
+  // Future<void> loadTemplates() async {
+  //   try {
+  //     final directory = await getApplicationDocumentsDirectory();
+  //     final appDirPath = path.join(directory.path, 'flomosupport');
+  //     final dir = Directory(appDirPath);
+  //     if (!await dir.exists()) {
+  //       await dir.create(recursive: true);
+  //     }
+
+  //     final file = File(path.join(appDirPath, _fileName));
+  //     if (await file.exists()) {
+  //       developer.log("Attempting to read templates file.");
+  //       final contents = await file.readAsString();
+  //       final list = json.decode(contents);
+  //       if (list is! List) {
+  //         throw const FormatException('JSON内容不是列表类型');
+  //       }
+  //       if (mounted) {
+  //         setState(() {
+  //           templatesdata = list.map((e) => Template.fromJson(e)).toList();
+  //         });
+  //         developer.log("Successfully loaded templates data.");
+  //       }
+  //     } else {
+  //       developer
+  //           .log("Templates file does not exist, initializing empty list.");
+  //       setState(() {
+  //         templatesdata = []; // 文件不存在时，初始化为空列表
+  //       });
+  //       _extractUniqueClassItems();
+  //     }
+  //   } catch (e) {
+  //     developer.log('加载模板失败: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('加载模板失败: ${e.toString()}',
+  //               style: TextStyle(color: Theme.of(context).colorScheme.onError)),
+  //           backgroundColor: Theme.of(context).colorScheme.error,
+  //         ),
+  //       );
+  //     }
+  //     _extractUniqueClassItems();
+  //   }
+  // }
+
+  // void _extractUniqueClassItems() {
+  //   final Set<String> classItemsSet = {};
+  //   for (final template in templatesdata) {
+  //     if (template.classitems != null) {
+  //       for (final item in template.classitems!) {
+  //         classItemsSet.add(item);
+  //       }
+  //     }
+  //   }
+  //   setState(() {
+  //     _uniqueClassItems = classItemsSet.toList()..sort();
+  //   });
+  // }
 
   List<Template> get _filteredTemplates {
     if (_selectedClassItem == null) {
@@ -150,7 +210,9 @@ class GuideState extends State<Guide> {
               );
               // 如果 Newguide 页面返回 true，则刷新模板列表
               if (result != null && result == true) {
-                await loadTemplates();
+                // await loadTemplates();
+                // await _StorageService.loadTemplates();
+                _loadAllData();
                 // setState 已经在 loadTemplates 中调用，这里不需要重复
               }
             },
@@ -250,9 +312,11 @@ class GuideState extends State<Guide> {
                       final template = _filteredTemplates[index];
                       // return buildTemplateCard(template, currentTheme); // 传递主题数据
                       return TemplateCard(
-                          template: template,
-                          theme: currentTheme,
-                          onRefresh: loadTemplates);
+                        template: template,
+                        theme: currentTheme,
+                        // onRefresh: loadTemplates
+                        onRefresh: _loadAllData,
+                      );
                     },
                   ),
           ),

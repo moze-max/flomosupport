@@ -1,11 +1,11 @@
 import 'package:flomosupport/components/show_snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'dart:convert';
-import 'package:image_picker/image_picker.dart';
 import 'package:flomosupport/models/guidemodel.dart'; // 确保路径正确
 import 'package:flomosupport/components/dialog_components.dart';
+import 'package:flomosupport/functions/image_picker_service.dart'; // 假设你有一个 showSnackbar 辅助函数
+import 'package:flomosupport/functions/storage_service.dart';
+import 'package:flomosupport/functions/class_items.dart';
 
 class Newguide extends StatefulWidget {
   const Newguide({super.key});
@@ -15,75 +15,109 @@ class Newguide extends StatefulWidget {
 }
 
 class NewguideState extends State<Newguide> {
-  final _fileName = 'templates.json';
-  final _imageDirName = 'guideimages'; // 新增：存放图片子文件夹名称
-
   List<Template> _templates = [];
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _classItemController = TextEditingController();
+  final ImagePickerService _imagePickerService = ImagePickerService();
+  final StorageService _StorageService = StorageService();
+  final ClassItemService _classItemService = ClassItemService();
   final List<String> _useritems = [];
+  List<String> _availableClassItems = []; // 由 ClassItemService 填充，保持顺序
+  final Set<String> _selectedClassItems =
+      {}; // 当前模板已选中的 classitems (仍为 Set，因为选中不关心顺序)
   File? _pickedImage; // 用于存储用户选择的图片文件
 
   @override
   void initState() {
     super.initState();
-    _loadTemplates();
+    _initializeData();
   }
 
-  // 加载模板的逻辑保持不变
-  Future<void> _loadTemplates() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final appDirPath = '${directory.path}/flomosupport'; // 应用根目录
-      final file = File('$appDirPath/$_fileName');
-
-      if (await file.exists()) {
-        final contents = await file.readAsString();
-        final jsonList = json.decode(contents) as List;
-        setState(() {
-          _templates = jsonList.map((json) => Template.fromJson(json)).toList();
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        showSnackbar(context, '模板加载失败，: $e');
-      }
-    }
-  }
-
-  // 保存所有模板的逻辑保持不变
-  Future<void> _saveTemplates() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final appDirPath = '${directory.path}/flomosupport';
-      final dir = Directory(appDirPath);
-      if (!await dir.exists()) {
-        await dir.create(recursive: true);
-      }
-      final file = File('$appDirPath/$_fileName');
-
-      final jsonList = _templates.map((e) => e.toJson()).toList();
-      await file.writeAsString(json.encode(jsonList));
-    } catch (e) {
-      if (mounted) {
-        showSnackbar(context, '模板保存失败: $e');
-      }
-    }
-  }
-
-  // 新增：图片选择器方法
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image =
-        await picker.pickImage(source: ImageSource.gallery); // 可以选择 .camera
-    if (image != null) {
+  Future<void> _initializeData() async {
+    final loadedTemplates = await _StorageService.loadTemplates();
+    if (mounted) {
       setState(() {
-        _pickedImage = File(image.path);
+        _templates = loadedTemplates;
+      });
+    }
+
+    // 从 ClassItemService 加载 List<String>
+    List<String> loadedClassItems = await _classItemService.loadClassItems();
+
+    if (loadedClassItems.isEmpty && _templates.isNotEmpty) {
+      await _classItemService.extractAndSaveFromTemplates(_templates);
+      loadedClassItems = await _classItemService.loadClassItems();
+    }
+
+    if (mounted) {
+      setState(() {
+        _availableClassItems = loadedClassItems;
       });
     }
   }
 
-  // 新增：保存当前模板的逻辑，包括图片处理
-  Future<void> _saveTemplate() async {
+  void _addCustomClassItem() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        String newClassItem = '';
+        return AlertDialog(
+          title: const Text('添加新分类'),
+          content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(hintText: '输入分类名称'),
+            onChanged: (value) {
+              newClassItem = value.trim();
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('取消'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (newClassItem.isNotEmpty) {
+                  // 通过服务添加并保存
+                  await _classItemService.addAndSaveClassItem(newClassItem);
+
+                  // 更新本地 UI 状态 (如果 service 已处理了唯一性，这里只需添加)
+                  if (mounted) {
+                    setState(() {
+                      // 确保本地列表也添加，且不重复
+                      if (!_availableClassItems.contains(newClassItem)) {
+                        _availableClassItems.add(newClassItem);
+                      }
+                      _selectedClassItems.add(newClassItem); // 添加后默认选中
+                    });
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                } else {
+                  showSnackbar(context, '分类名称不能为空！', isError: true);
+                }
+              },
+              child: const Text('添加'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage() async {
+    final File? image = await _imagePickerService.pickImageFromGallery();
+    if (image != null) {
+      setState(() {
+        _pickedImage = image;
+      });
+    }
+  }
+
+  Future<void> _createAndPersistNewTemplate() async {
     if (_nameController.text.isEmpty) {
       showSnackbar(context, '模板名称不能为空！', isError: true);
       return;
@@ -93,51 +127,28 @@ class NewguideState extends State<Newguide> {
       return;
     }
 
-    String? imagePath;
-    if (_pickedImage != null) {
-      try {
-        final directory = await getApplicationDocumentsDirectory();
-        final imageDirPath = '${directory.path}/flomosupport/$_imageDirName';
-        final imageDir = Directory(imageDirPath);
-        if (!await imageDir.exists()) {
-          await imageDir.create(recursive: true);
-        }
-
-        // 使用时间戳作为图片名，确保唯一性
-        final String newFileName =
-            '${DateTime.now().millisecondsSinceEpoch}.png';
-        final String newPath = '$imageDirPath/$newFileName';
-        final File newImage = await _pickedImage!.copy(newPath); // 复制图片到指定目录
-        imagePath = newImage.path; // 存储新图片路径
-      } catch (e) {
-        if (mounted) {
-          showSnackbar(context, '封面图片保存失败: $e', isError: true);
-        }
-
-        imagePath = null;
-      }
-    }
-
-    final newTemplate = Template.create(
-        name: _nameController.text.trim(),
-        items: List<String>.from(_useritems),
-        imagePath: imagePath);
-
-    setState(() {
-      _templates.add(newTemplate);
-    });
+    // Call the refactored saveNewTemplate method from StorageService
+    final savedTemplate = await StorageService.saveNewTemplate(
+      name: _nameController.text,
+      items: _useritems,
+      pickedImage: _pickedImage,
+      classitems: _selectedClassItems.toList(),
+    );
 
     if (mounted) {
-      await _saveTemplates(); // 调用 _saveTemplates 将所有模板保存到文件
-      _nameController.clear(); // 清空名称输入框
-      _useritems.clear(); // 清空当前条目列表
-      _pickedImage = null; // 清空已选择的图片
-      if (mounted) {
+      if (savedTemplate != null) {
+        setState(() {
+          _templates.add(
+              savedTemplate); // Add the newly saved template to your local list
+        });
         showSnackbar(context, '模板保存成功！');
-      }
-      // 返回上一页并传递成功结果，可以用于刷新Guide页面
-      if (mounted) {
-        Navigator.pop(context, true);
+        _nameController.clear(); // 清空名称输入框
+        _useritems.clear(); // 清空当前条目列表
+        _pickedImage = null; // 清空已选择的图片
+        _selectedClassItems.clear();
+        Navigator.pop(context, true); // 返回上一页并传递成功结果
+      } else {
+        showSnackbar(context, '模板保存失败，请重试！', isError: true);
       }
     }
   }
@@ -208,6 +219,82 @@ class NewguideState extends State<Newguide> {
                               ),
                               style: TextStyle(
                                   color: currentTheme.colorScheme.onSurface),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: 50, // 高度固定
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _availableClassItems.length +
+                                    1, // +1 for the add button
+                                itemBuilder: (context, index) {
+                                  if (index == _availableClassItems.length) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: ActionChip(
+                                        label: const Icon(Icons.add),
+                                        onPressed: _addCustomClassItem,
+                                        backgroundColor: currentTheme
+                                            .colorScheme
+                                            .surfaceContainerHighest,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          side: BorderSide(
+                                              color: currentTheme
+                                                  .colorScheme.outline),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    final classItem = _availableClassItems[
+                                        index]; // 从 List 获取元素
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: ChoiceChip(
+                                        label: Text(classItem),
+                                        selected: _selectedClassItems
+                                            .contains(classItem),
+                                        onSelected: (selected) {
+                                          setState(() {
+                                            if (selected) {
+                                              _selectedClassItems
+                                                  .add(classItem);
+                                            } else {
+                                              _selectedClassItems
+                                                  .remove(classItem);
+                                            }
+                                          });
+                                        },
+                                        selectedColor:
+                                            currentTheme.colorScheme.primary,
+                                        labelStyle: TextStyle(
+                                          color: _selectedClassItems
+                                                  .contains(classItem)
+                                              ? currentTheme
+                                                  .colorScheme.onPrimary
+                                              : currentTheme
+                                                  .colorScheme.onSurface,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          side: BorderSide(
+                                            color: _selectedClassItems
+                                                    .contains(classItem)
+                                                ? currentTheme
+                                                    .colorScheme.primary
+                                                : currentTheme
+                                                    .colorScheme.outline,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
                             ),
                             const SizedBox(height: 16),
                             GestureDetector(
@@ -341,7 +428,7 @@ class NewguideState extends State<Newguide> {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: ElevatedButton(
-                                    onPressed: _saveTemplate,
+                                    onPressed: _createAndPersistNewTemplate,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:
                                           currentTheme.colorScheme.primary,
@@ -383,6 +470,7 @@ class NewguideState extends State<Newguide> {
   @override
   void dispose() {
     _nameController.dispose();
+    _classItemController.dispose();
     super.dispose();
   }
 }

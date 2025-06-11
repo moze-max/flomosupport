@@ -10,11 +10,18 @@ import 'package:flomosupport/models/guidemodel.dart';
 class StorageService {
   /// Retrieves the path to the templates file.
   static Future<File> getTemplatesFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final dirPath = path.join(directory.path, 'flomosupport');
-    // Ensure the directory exists
-    await Directory(dirPath).create(recursive: true);
-    return File(path.join(dirPath, 'templates.json'));
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final dirPath = path.join(directory.path, 'flomosupport');
+      final dir = Directory(dirPath);
+      if (!dir.existsSync()) {
+        await dir.create(recursive: true);
+      }
+      return File(path.join(dirPath, 'templates.json'));
+    } catch (e) {
+      // 可记录日志或抛出错误
+      throw Exception('Failed to get templates file: $e');
+    }
   }
 
   /// Reads the templates from the local file.
@@ -120,14 +127,44 @@ class StorageService {
     }
   }
 
-  Future<void> saveTemplates(List<Template> templates) async {
+  /// Saves a new template to local storage.
+  ///
+  /// Returns the newly created [Template] object if successful, otherwise `null`.
+  /// This method handles image saving and updates the templates file.
+  static Future<Template?> saveNewTemplate(
+      {required String name,
+      required List<String> items,
+      File? pickedImage,
+      List<String>? classitems}) async {
+    String? imagePath;
+    if (pickedImage != null) {
+      try {
+        imagePath = await saveImageToFile(pickedImage);
+        if (imagePath == null) {
+          developer.log("Failed to save template image.");
+          return null; // Indicate failure if image saving fails
+        }
+      } catch (e) {
+        developer.log("Error saving cover image for template: $e");
+        return null; // Indicate failure if image saving throws an error
+      }
+    }
+
+    final newTemplate = Template.create(
+        name: name.trim(),
+        items: List<String>.from(items),
+        imagePath: imagePath,
+        classitems: classitems);
+
     try {
-      final file = await getTemplatesFile();
-      final jsonList = templates.map((e) => e.toJson()).toList();
-      await file.writeAsString(json.encode(jsonList));
+      List<Template> currentTemplates = await readTemplatesFromFile();
+      currentTemplates.add(newTemplate);
+      await writeTemplatesToFile(currentTemplates);
+      developer.log("Template '${newTemplate.name}' saved successfully.");
+      return newTemplate;
     } catch (e) {
-      developer.log('Error saving templates: $e');
-      // 可以在这里集成 showSnackbar 或其他错误处理
+      developer.log("Error saving template to file: $e");
+      return null; // Indicate failure if template saving fails
     }
   }
 
