@@ -19,11 +19,20 @@ class Guide extends StatefulWidget {
 class GuideState extends State<Guide> {
   List<Template> templatesdata = [];
   final _fileName = 'templates.json';
+  // 新增的状态变量
+  String? _selectedClassItem; // null 表示选中 "全部"
+  List<String> _uniqueClassItems = []; // 存储所有不重复的 classItems
 
   @override
   void initState() {
     super.initState();
-    loadTemplates();
+    _selectedClassItem = null;
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await loadTemplates(); // 等待模板数据加载完成
+    _extractUniqueClassItems(); // 数据加载完成后再提取分类
   }
 
   Future<void> loadTemplates() async {
@@ -55,6 +64,7 @@ class GuideState extends State<Guide> {
         setState(() {
           templatesdata = []; // 文件不存在时，初始化为空列表
         });
+        _extractUniqueClassItems();
       }
     } catch (e) {
       developer.log('加载模板失败: $e');
@@ -67,6 +77,35 @@ class GuideState extends State<Guide> {
           ),
         );
       }
+      _extractUniqueClassItems();
+    }
+  }
+
+  void _extractUniqueClassItems() {
+    final Set<String> classItemsSet = {};
+    for (final template in templatesdata) {
+      if (template.classitems != null) {
+        for (final item in template.classitems!) {
+          classItemsSet.add(item);
+        }
+      }
+    }
+    setState(() {
+      _uniqueClassItems = classItemsSet.toList()..sort();
+    });
+  }
+
+  List<Template> get _filteredTemplates {
+    if (_selectedClassItem == null) {
+      // 如果选中“全部”，返回所有模板
+      return templatesdata;
+    } else {
+      // 否则，只返回包含选中 classItem 的模板
+      return templatesdata.where((template) {
+        // 只有当模板的 classitems 不为 null 且包含选中的 classItem 时才显示
+        return template.classitems != null &&
+            template.classitems!.contains(_selectedClassItem!);
+      }).toList();
     }
   }
 
@@ -121,45 +160,104 @@ class GuideState extends State<Guide> {
         backgroundColor: currentTheme.appBarTheme.backgroundColor,
         foregroundColor: currentTheme.appBarTheme.foregroundColor,
       ),
-      body: templatesdata.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.folder_open,
-                    size: 80,
-                    color: currentTheme.colorScheme.onSurface
-                        .withValues(alpha: 90),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '暂无模板，点击右上角加号创建',
-                    style: currentTheme.textTheme.titleMedium?.copyWith(
-                      color: currentTheme.colorScheme.onSurface.withAlpha(90),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : GridView.builder(
-              padding: const EdgeInsets.all(8), // 为 GridView 添加内边距
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 1.0, // 使卡片保持正方形
-              ),
-              itemCount: templatesdata.length,
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50, // 定义分类行的高度
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal, // 水平滚动
+              padding: const EdgeInsets.symmetric(horizontal: 8.0), // 左右内边距
+              itemCount: _uniqueClassItems.length + 1, // +1 用于“全部”选项
               itemBuilder: (context, index) {
-                final template = templatesdata[index];
-                // return buildTemplateCard(template, currentTheme); // 传递主题数据
-                return TemplateCard(
-                    template: template,
-                    theme: currentTheme,
-                    onRefresh: loadTemplates);
+                if (index == 0) {
+                  // 第一个选项是“全部”
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: ChoiceChip(
+                      label: Text('全部'), // "全部" 的本地化字符串
+                      selected: _selectedClassItem ==
+                          null, // 如果 _selectedClassItem 为 null，则选中
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _selectedClassItem = null; // 选中“全部”类别
+                          });
+                        }
+                      },
+                    ),
+                  );
+                } else {
+                  // 其他选项是具体的 classItem
+                  final classItem =
+                      _uniqueClassItems[index - 1]; // 获取对应的 classItem
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: ChoiceChip(
+                      label: Text(classItem),
+                      selected: _selectedClassItem ==
+                          classItem, // 如果当前 classItem 匹配，则选中
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _selectedClassItem = classItem; // 选中这个 classItem
+                          });
+                        }
+                      },
+                    ),
+                  );
+                }
               },
             ),
+          ),
+          Expanded(
+            child: _filteredTemplates.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.folder_open,
+                          size: 80,
+                          color: currentTheme.colorScheme.onSurface
+                              .withValues(alpha: 90),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _selectedClassItem == null &&
+                                  templatesdata
+                                      .isEmpty // 只有当“全部”被选中且原始数据为空时才显示这个
+                              ? '暂无模板，点击右上角加号创建'
+                              : '当前分类下暂无模板', // 如果选中了特定分类但过滤后为空
+                          style: currentTheme.textTheme.titleMedium?.copyWith(
+                            color: currentTheme.colorScheme.onSurface
+                                .withAlpha(90),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(8), // 为 GridView 添加内边距
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 1.0, // 使卡片保持正方形
+                    ),
+                    itemCount: _filteredTemplates.length,
+                    itemBuilder: (context, index) {
+                      final template = _filteredTemplates[index];
+                      // return buildTemplateCard(template, currentTheme); // 传递主题数据
+                      return TemplateCard(
+                          template: template,
+                          theme: currentTheme,
+                          onRefresh: loadTemplates);
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -120,7 +120,7 @@ class NewguideState extends State<Newguide> {
 
     final newTemplate = Template.create(
         name: _nameController.text.trim(),
-        items: List<dynamic>.from(_useritems),
+        items: List<String>.from(_useritems),
         imagePath: imagePath);
 
     setState(() {

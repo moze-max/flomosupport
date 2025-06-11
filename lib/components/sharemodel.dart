@@ -1,6 +1,6 @@
 // lib/templates/app_templates.dart
 import 'package:flutter/material.dart';
-import 'package:flomosupport/models/sharemodel.dart';
+import 'package:flomosupport/models/share_model.dart';
 
 // 模板1：简单卡片，带有渐变背景
 Widget _buildSimpleGradientCard(
@@ -108,13 +108,13 @@ Widget _buildBorderedCard(BuildContext context, String title, String content) {
   );
 }
 
-final List<Template> availableTemplates = [
-  Template(
+final List<shareTemplate> availableTemplates = [
+  shareTemplate(
     id: 'simple_gradient',
     name: '渐变卡片',
     builder: _buildSimpleGradientCard,
   ),
-  Template(
+  shareTemplate(
     id: 'bordered_minimal',
     name: '简约边框',
     builder: _buildBorderedCard,

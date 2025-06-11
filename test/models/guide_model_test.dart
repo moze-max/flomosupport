@@ -3,7 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:uuid/uuid.dart';
 
-// Assuming your Template class is in template.dart
+// Assuming your Template class is in guidemodel.dart
 import 'package:flomosupport/models/guidemodel.dart'; // Adjust this import path
 
 // We need to mock the Uuid class to control ID generation for testing
@@ -22,35 +22,46 @@ void main() {
   });
 
   group('Template Class', () {
-    test('Template constructor initializes all properties correctly', () {
+    // --- Test Template constructor ---
+    test(
+        'Template constructor initializes all properties correctly (including classitems)',
+        () {
       final template = Template(
         id: 'test-id-123',
         name: 'My Custom Template',
-        items: [1, 2, 'hello'],
+        items: ['1', '2', 'hello'],
+        classitems: ['classA', 'classB'], // Test with classitems
         imagePath: 'assets/images/template1.png',
       );
 
       expect(template.id, 'test-id-123');
       expect(template.name, 'My Custom Template');
-      expect(template.items, equals([1, 2, 'hello']));
+      expect(template.items, equals(['1', '2', 'hello']));
+      expect(template.classitems,
+          equals(['classA', 'classB'])); // Verify classitems
       expect(template.imagePath, 'assets/images/template1.png');
     });
 
-    test('Template constructor handles default items correctly', () {
+    test(
+        'Template constructor handles default items and null classitems correctly',
+        () {
       final template = Template(
         id: 'test-id-456',
         name: 'Template with Default Items',
         imagePath: 'assets/images/default.png',
+        // classitems is null by default if not provided
       );
 
       expect(template.id, 'test-id-456');
       expect(template.name, 'Template with Default Items');
       expect(template.items, isEmpty); // Default is const []
+      expect(template.classitems, isNull); // Default is null
       expect(template.imagePath, 'assets/images/default.png');
     });
 
+    // --- Test Template.create() factory constructor ---
     test(
-        'Template.create factory constructor generates a unique ID (with injection)',
+        'Template.create factory constructor generates a unique ID (with injection) and handles all fields',
         () {
       // Configure our mock Uuid instance to return a specific ID
       when(mockUuid.v4()).thenReturn('generated-mock-uuid');
@@ -59,6 +70,8 @@ void main() {
       final template = Template.create(
         name: 'Auto Generated Template with Mocked Uuid',
         items: ['item1'],
+        classitems: ['created_class_1'], // Test with classitems in create
+        imagePath: 'assets/image.png',
         uuidGenerator: mockUuid, // <-- 注入 mockUuid
       );
 
@@ -67,7 +80,29 @@ void main() {
       expect(template.id, 'generated-mock-uuid'); // Expect the mocked ID
       expect(template.name, 'Auto Generated Template with Mocked Uuid');
       expect(template.items, equals(['item1']));
-      expect(template.imagePath, isNull);
+      expect(template.classitems,
+          equals(['created_class_1'])); // Verify classitems from create
+      expect(template.imagePath, 'assets/image.png');
+    });
+
+    test('Template.create handles null classitems correctly', () {
+      when(mockUuid.v4()).thenReturn('uuid-with-null-classitems');
+      final template = Template.create(
+        name: 'No Classitems Template',
+        items: ['some_item'],
+        classitems: null, // Explicitly set classitems to null
+      );
+      expect(template.classitems, isNull);
+    });
+
+    test('Template.create handles empty classitems list correctly', () {
+      when(mockUuid.v4()).thenReturn('uuid-with-empty-classitems');
+      final template = Template.create(
+        name: 'Empty Classitems Template',
+        items: ['some_item'],
+        classitems: [], // Explicitly set classitems to empty list
+      );
+      expect(template.classitems, isEmpty);
     });
 
     test('Template.create handles null imagePath correctly', () {
@@ -78,14 +113,17 @@ void main() {
 
     // --- Test Cases for toJson() ---
 
-    test('toJson converts Template to JSON map with all fields', () {
+    test(
+        'toJson converts Template to JSON map with all fields (including classitems)',
+        () {
       final template = Template(
         id: 'json-id-1',
         name: 'JSON Template',
+        classitems: ['class_item_1', 'class_item_2'], // Test with classitems
         items: [
-          {'key': 'value'},
-          true,
-          123
+          'item_string_1',
+          'item_string_2',
+          'item_string_3',
         ],
         imagePath: 'path/to/image.jpg',
       );
@@ -95,20 +133,44 @@ void main() {
       expect(jsonMap, isA<Map<String, dynamic>>());
       expect(jsonMap['id'], 'json-id-1');
       expect(jsonMap['name'], 'JSON Template');
+      expect(jsonMap['items'],
+          equals(['item_string_1', 'item_string_2', 'item_string_3']));
       expect(
-          jsonMap['items'],
-          equals([
-            {'key': 'value'},
-            true,
-            123
-          ]));
+          jsonMap['classitems'],
+          equals(
+              ['class_item_1', 'class_item_2'])); // Verify classitems in JSON
       expect(jsonMap['imagePath'], 'path/to/image.jpg');
+    });
+
+    test('toJson handles null classitems correctly', () {
+      final template = Template(
+        id: 'json-id-with-null-classitems',
+        name: 'Template with Null Classitems',
+        classitems: null, // classitems is null
+        items: ['some_item'],
+      );
+
+      final jsonMap = template.toJson();
+      expect(jsonMap['classitems'], isNull); // Expect null in JSON
+    });
+
+    test('toJson handles empty classitems list correctly', () {
+      final template = Template(
+        id: 'json-id-with-empty-classitems',
+        name: 'Template with Empty Classitems',
+        classitems: [], // classitems is an empty list
+        items: ['some_item'],
+      );
+
+      final jsonMap = template.toJson();
+      expect(jsonMap['classitems'], isEmpty); // Expect empty list in JSON
     });
 
     test('toJson handles null imagePath correctly', () {
       final template = Template(
         id: 'json-id-2',
         name: 'Template Without Image',
+        // classitems will be null by default
       );
 
       final jsonMap = template.toJson();
@@ -116,6 +178,7 @@ void main() {
       expect(jsonMap['id'], 'json-id-2');
       expect(jsonMap['name'], 'Template Without Image');
       expect(jsonMap['items'], isEmpty); // Default empty list
+      expect(jsonMap['classitems'], isNull); // Default null
       expect(jsonMap['imagePath'], isNull);
     });
 
@@ -131,19 +194,22 @@ void main() {
       expect(jsonMap['id'], 'json-id-3');
       expect(jsonMap['name'], 'Template With Empty Items');
       expect(jsonMap['items'], isEmpty);
+      expect(jsonMap['classitems'], isNull); // Default null
       expect(jsonMap['imagePath'], isNull);
     });
 
     // --- Test Cases for fromJson() ---
 
-    test('fromJson correctly parses a full JSON map', () {
+    test('fromJson correctly parses a full JSON map (including classitems)',
+        () {
       final jsonMap = {
         'id': 'from-json-id-1',
         'name': 'Parsed Template',
-        'items': [
-          {'itemKey': 'itemValue'},
-          42
-        ],
+        'classitems': [
+          'parsed_class_item_1',
+          'parsed_class_item_2'
+        ], // Test with classitems
+        'items': ['parsed_item_X', 'parsed_item_Y'],
         'imagePath': 'images/parsed.png',
       };
 
@@ -152,12 +218,46 @@ void main() {
       expect(template.id, 'from-json-id-1');
       expect(template.name, 'Parsed Template');
       expect(
-          template.items,
+          template.classitems,
           equals([
-            {'itemKey': 'itemValue'},
-            42
-          ]));
+            'parsed_class_item_1',
+            'parsed_class_item_2'
+          ])); // Verify parsed classitems
+      expect(template.items, equals(['parsed_item_X', 'parsed_item_Y']));
       expect(template.imagePath, 'images/parsed.png');
+    });
+
+    test('fromJson handles null classitems in JSON correctly', () {
+      final jsonMap = {
+        'id': 'from-json-id-with-null-classitems',
+        'name': 'Template from Null Classitems',
+        'classitems': null, // JSON has null classitems
+        'items': ['item'],
+      };
+      final template = Template.fromJson(jsonMap);
+      expect(template.classitems, isNull);
+    });
+
+    test('fromJson handles empty classitems list in JSON correctly', () {
+      final jsonMap = {
+        'id': 'from-json-id-with-empty-classitems',
+        'name': 'Template from Empty Classitems',
+        'classitems': [], // JSON has empty classitems
+        'items': ['item'],
+      };
+      final template = Template.fromJson(jsonMap);
+      expect(template.classitems, isEmpty);
+    });
+
+    test('fromJson handles missing classitems key in JSON (defaults to null)',
+        () {
+      final jsonMap = {
+        'id': 'from-json-id-missing-classitems',
+        'name': 'Template Missing Classitems',
+        'items': ['item'],
+      };
+      final template = Template.fromJson(jsonMap);
+      expect(template.classitems, isNull); // Should be null if key is missing
     });
 
     test('fromJson handles missing imagePath (null) correctly', () {
@@ -195,17 +295,34 @@ void main() {
       final jsonMap = {
         'id': 'from-json-id-4',
         'name': 'Template Missing Items Key',
+        // 'items' key is missing
         'imagePath': 'some/path.jpg',
       };
-      expect(() => Template.fromJson(jsonMap), throwsA(isA<TypeError>()));
+      final template =
+          Template.fromJson(jsonMap); // Should not throw, but default to empty
+      expect(template.items, isEmpty); // Verify it defaults to empty
+      expect(template.id, 'from-json-id-4');
+      expect(template.name, 'Template Missing Items Key');
+      expect(template.imagePath, 'some/path.jpg');
     });
 
-    test('== returns true for Templates with the same id', () {
-      final template1 = Template(id: 'same-id', name: 'Name1', items: ['a']);
+    // --- Test Cases for operator == and hashCode ---
+
+    test(
+        '== returns true for Templates with the same id (ignoring other fields)',
+        () {
+      final template1 = Template(
+          id: 'same-id',
+          name: 'Name1',
+          items: ['a'],
+          classitems: ['x'],
+          imagePath: 'p1');
       final template2 = Template(
           id: 'same-id',
           name: 'Name2',
-          items: ['b']); // Name and items don't matter for equality
+          items: ['b'],
+          classitems: ['y'],
+          imagePath: 'p2');
 
       expect(template1 == template2, isTrue);
     });
@@ -218,15 +335,18 @@ void main() {
     });
 
     test('== returns false for Template and other object types', () {
-      final template = Template(id: 'some-id', name: 'Test');
-      const otherObject = 'not a template';
+      final template = Template(
+          id: 'some-id', name: 'Test', items: []); // Ensure items is provided
+      final otherObject = Object();
 
       expect(template == otherObject, isFalse);
     });
 
     test('hashCode is the same for Templates with the same id', () {
-      final template1 = Template(id: 'same-id', name: 'Name1');
-      final template2 = Template(id: 'same-id', name: 'Name2');
+      final template1 = Template(
+          id: 'same-id', name: 'Name1', items: ['a'], classitems: ['x']);
+      final template2 = Template(
+          id: 'same-id', name: 'Name2', items: ['b'], classitems: ['y']);
 
       expect(template1.hashCode, template2.hashCode);
     });
@@ -239,7 +359,8 @@ void main() {
     });
 
     test('hashCode matches id.hashCode', () {
-      final template = Template(id: 'specific-id-for-hash', name: 'Hash Test');
+      final template =
+          Template(id: 'specific-id-for-hash', name: 'Hash Test', items: []);
       expect(template.hashCode, 'specific-id-for-hash'.hashCode);
     });
   });
