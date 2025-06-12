@@ -33,6 +33,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   children: [
                     UserAvatarManager(
                       radius: avatarRadius,
+                      enableActions: true,
                     ),
                     const SizedBox(width: 30),
                     const Expanded(
@@ -79,9 +80,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onTap: () {
-              // Navigator.pop(context);
               Navigator.pushNamed(context, '/article');
-              // Navigate to Settings page
             },
           ),
           ListTile(

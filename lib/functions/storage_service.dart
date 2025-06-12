@@ -10,6 +10,7 @@ class StorageService {
   static const String _templatesFileName = 'templates.json';
   static const String _classItemsFileName = 'class_items.json';
   static const String _imageDirName = 'template_images';
+  static const String _avatarDirName = 'avatars';
 
   /// Private helper to get the File object for a given data filename
   static Future<File> _getFile(String fileName) async {
@@ -32,6 +33,17 @@ class StorageService {
       await imageDir.create(recursive: true);
     }
     return imageDir;
+  }
+
+  static Future<Directory> _getAvatarDirectory() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final avatarDirPath =
+        path.join(directory.path, _appFolderName, _avatarDirName);
+    final Directory avatarDir = Directory(avatarDirPath);
+    if (!await avatarDir.exists()) {
+      await avatarDir.create(recursive: true);
+    }
+    return avatarDir;
   }
 
   // ==============================================
@@ -189,6 +201,144 @@ class StorageService {
       }
     } catch (e) {
       developer.log("Error deleting image file: $e");
+    }
+  }
+
+  // ==============================================
+  //  Avatar Operations
+  // ==============================================
+
+  static const String _currentAvatarPathFileName = 'current_avatar_path.txt';
+
+  /// Saves the user's avatar. Generates a unique filename using a timestamp.
+  /// This ensures that even if the content changes, the path does, triggering
+  /// UI refresh. It also stores the path to a text file for persistence.
+  /// Returns the path to the saved avatar, or null if failed.
+  static Future<String?> saveAvatar(File avatarFile) async {
+    try {
+      final avatarDir = await _getAvatarDirectory();
+      // 生成唯一的头像文件名
+      final String newAvatarFileName =
+          '${DateTime.now().microsecondsSinceEpoch}.png';
+      final String newAvatarPath = path.join(avatarDir.path, newAvatarFileName);
+
+      // 复制文件到新路径
+      final File newAvatar = await avatarFile.copy(newAvatarPath);
+      developer.log("Avatar saved to: ${newAvatar.path}");
+
+      // 记录新头像的路径到文件中
+      final pathFile = await _getFile(_currentAvatarPathFileName);
+      await pathFile.writeAsString(newAvatar.path);
+      developer.log("Current avatar path saved to: ${pathFile.path}");
+
+      // 删除旧头像文件（如果存在且不同于新头像）
+      // 在保存新头像之前，先读取旧路径并删除旧文件，避免文件堆积
+      final String? oldAvatarPath = await _readCurrentAvatarPath();
+      if (oldAvatarPath != null && oldAvatarPath != newAvatar.path) {
+        final oldAvatarFile = File(oldAvatarPath);
+        if (await oldAvatarFile.exists()) {
+          await oldAvatarFile.delete();
+          developer.log("Deleted old avatar: $oldAvatarPath");
+        }
+      }
+      await _cleanOldAvatars(newAvatar.path);
+      return newAvatar.path;
+    } catch (e) {
+      developer.log("Error saving avatar: $e");
+      return null;
+    }
+  }
+
+  /// Loads the saved avatar image based on the path stored in a text file.
+  /// Returns a [File] object of the avatar, or `null` if no avatar is found.
+  static Future<File?> loadAvatar() async {
+    try {
+      final String? avatarPath = await _readCurrentAvatarPath();
+      if (avatarPath != null && avatarPath.isNotEmpty) {
+        final File avatarFile = File(avatarPath);
+        if (await avatarFile.exists()) {
+          developer.log("Avatar loaded from: ${avatarFile.path}");
+          return avatarFile;
+        } else {
+          // 文件不存在，可能是被删除了，清除记录
+          developer.log(
+              "Avatar file not found at recorded path: $avatarPath. Clearing record.");
+          await deleteAvatarPathRecord();
+          return null;
+        }
+      }
+      developer.log("No avatar path record found.");
+      return null; // No avatar path found
+    } catch (e) {
+      developer.log("Error loading avatar: $e");
+      return null;
+    }
+  }
+
+  /// Deletes the saved avatar image and its path record.
+  static Future<void> deleteAvatar() async {
+    try {
+      final String? avatarPath = await _readCurrentAvatarPath();
+      if (avatarPath != null && avatarPath.isNotEmpty) {
+        final File avatarFile = File(avatarPath);
+        if (await avatarFile.exists()) {
+          await avatarFile.delete();
+          developer.log("Avatar image deleted from: $avatarPath");
+        }
+      }
+      await deleteAvatarPathRecord(); // 删除路径记录文件
+      developer.log("Avatar path record deleted.");
+      await _cleanOldAvatars(null);
+    } catch (e) {
+      developer.log("Error deleting avatar: $e");
+    }
+  }
+
+  /// Helper to read the current avatar path from a file.
+  static Future<String?> _readCurrentAvatarPath() async {
+    try {
+      final pathFile = await _getFile(_currentAvatarPathFileName);
+      if (await pathFile.exists()) {
+        return await pathFile.readAsString();
+      }
+      return null;
+    } catch (e) {
+      developer.log("Error reading current avatar path: $e");
+      return null;
+    }
+  }
+
+  /// Helper to delete the current avatar path record file.
+  static Future<void> deleteAvatarPathRecord() async {
+    try {
+      final pathFile = await _getFile(_currentAvatarPathFileName);
+      if (await pathFile.exists()) {
+        await pathFile.delete();
+      }
+    } catch (e) {
+      developer.log("Error deleting avatar path record: $e");
+    }
+  }
+
+  static Future<void> _cleanOldAvatars(String? currentAvatarPath) async {
+    try {
+      final avatarDir = await _getAvatarDirectory();
+      if (!await avatarDir.exists()) {
+        return; // 目录不存在，无需清理
+      }
+
+      final List<FileSystemEntity> files = avatarDir.listSync();
+      for (final FileSystemEntity entity in files) {
+        if (entity is File) {
+          // 确保是文件，并且不是当前有效的头像文件路径
+          if (currentAvatarPath == null || entity.path != currentAvatarPath) {
+            await entity.delete();
+            developer.log("Cleaned up old avatar file: ${entity.path}");
+          }
+        }
+      }
+    } catch (e) {
+      developer.log("Error cleaning up old avatars: $e");
     }
   }
 }

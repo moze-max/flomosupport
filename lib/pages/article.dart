@@ -14,8 +14,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:flomosupport/pages/article/about.dart';
 import 'dart:io'; // 导入 dart:io 用于 File
-import 'package:path_provider/path_provider.dart'; // 导入 path_provider 获取应用目录
-import 'package:path/path.dart' as path; // 导入 path 包处理路径
+import 'package:flomosupport/functions/avatar_notifier.dart';
+import 'package:provider/provider.dart';
 
 class Article extends StatefulWidget {
   const Article({super.key, required this.scaffoldKey});
@@ -31,13 +31,10 @@ class _ArticleState extends State<Article> {
   String? savedKey;
   final textController = TextEditingController();
 
-  File? _localAvatarFile;
-
   @override
   void initState() {
     super.initState();
     _loadKey();
-    _loadLocalAvatar();
     textController.addListener(() {
       if (showSuccessMessage) {
         setState(() {
@@ -53,77 +50,6 @@ class _ArticleState extends State<Article> {
       savedKey = key;
       textController.text = key ?? '';
     });
-  }
-
-  Future<void> _loadLocalAvatar() async {
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final avatarsDir =
-          Directory(path.join(appDir.path, 'flomosupport', 'avatars'));
-
-      // Check if the directory exists
-      if (!await avatarsDir.exists()) {
-        // developer.log('Avatar directory does not exist: ${avatarsDir.path}');
-        if (mounted) {
-          setState(() {
-            _localAvatarFile = null; // No directory, so no avatar
-          });
-        }
-        return;
-      }
-
-      // List all files in the directory
-      final files = avatarsDir.listSync().whereType<File>().toList();
-
-      File? latestAvatarFile;
-
-      // Filter for avatar files (based on your new naming convention)
-      // and find the most recent one
-      if (files.isNotEmpty) {
-        final avatarFiles = files.where((file) {
-          final fileName = path.basename(file.path);
-          // Assuming your new files are like 'user_avatar_TIMESTAMP.png'
-          return fileName.startsWith('user_avatar_') &&
-              path.extension(fileName) == '.png';
-        }).toList();
-
-        if (avatarFiles.isNotEmpty) {
-          // Sort by last modified date to find the latest
-          avatarFiles.sort(
-              (a, b) => b.lastModifiedSync().compareTo(a.lastModifiedSync()));
-          latestAvatarFile = avatarFiles.first;
-        }
-      }
-
-      if (latestAvatarFile != null && await latestAvatarFile.exists()) {
-        if (mounted) {
-          setState(() {
-            _localAvatarFile =
-                latestAvatarFile; // Set the local avatar file to the latest one found
-          });
-        }
-        // developer
-        //     .log('Successfully loaded local avatar: ${latestAvatarFile.path}');
-      } else {
-        if (mounted) {
-          setState(() {
-            _localAvatarFile = null; // No avatar found or file doesn't exist
-          });
-        }
-        // developer.log('No local avatar file found or it does not exist.');
-      }
-    } catch (e) {
-      // developer.log(
-      //     'Failed to load local avatar: $e'); // Use developer.log for debugging
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('加载本地头像失败: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 
   Future<void> saveKey() async {
@@ -152,6 +78,8 @@ class _ArticleState extends State<Article> {
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     final bool canPop = Navigator.of(context).canPop();
+    final File? currentAvatar =
+        Provider.of<AvatarNotifier>(context, listen: true).currentAvatar;
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.articlePageTitle),
@@ -223,10 +151,10 @@ class _ArticleState extends State<Article> {
                     children: [
                       CircleAvatar(
                         radius: 16,
-                        backgroundImage: _localAvatarFile != null
-                            ? FileImage(_localAvatarFile!)
+                        backgroundImage: currentAvatar != null
+                            ? FileImage(currentAvatar)
                             : null,
-                        child: _localAvatarFile == null
+                        child: currentAvatar == null
                             ? const Icon(Icons.account_circle,
                                 size: 28, color: Colors.grey)
                             : null,
