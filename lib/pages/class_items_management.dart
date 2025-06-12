@@ -52,9 +52,6 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
     final classItemNotifier =
         Provider.of<ClassItemNotifier>(context, listen: false);
     await classItemNotifier.refreshClassItems(); // 通知刷新分类
-    // if (mounted) {
-    //   showSnackbar(context, '分类顺序已保存');
-    // }
   }
 
   Future<void> _addCustomClassItem() async {

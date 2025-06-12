@@ -12,7 +12,6 @@
   "guidePageTitle": "模板",
   "aboutPageTitle": "关于我们",
   "notificationPageTitle": "通知",
-  "helloMessage": "你好，{userName}！",
   "welcomeButton": "欢迎",
   "bottomNavGuide": "写作模板",
   "aboutDeveloperIntro": "我只是一个路过的flomo使用者，没有他们那么强大的力量制作高级的产品",

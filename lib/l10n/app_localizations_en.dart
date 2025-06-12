@@ -27,11 +27,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationPageTitle => 'Notifications';
 
   @override
-  String helloMessage(Object userName) {
-    return 'Hello, $userName!';
-  }
-
-  @override
   String get welcomeButton => 'Welcome';
 
   @override

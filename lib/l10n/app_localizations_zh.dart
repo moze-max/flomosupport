@@ -27,11 +27,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationPageTitle => '通知';
 
   @override
-  String helloMessage(Object userName) {
-    return '你好，$userName！';
-  }
-
-  @override
   String get welcomeButton => '欢迎';
 
   @override

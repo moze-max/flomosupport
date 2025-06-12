@@ -1,12 +1,7 @@
 import 'package:flomosupport/components/guide_card.dart';
-import 'package:flomosupport/components/show_snackbar.dart';
-import 'package:flomosupport/functions/class_items.dart';
 import 'package:flomosupport/functions/class_items_notification.dart';
-import 'package:flomosupport/functions/storage_service.dart';
 import 'package:flomosupport/pages/newguide.dart';
 import 'package:flutter/material.dart';
-import 'package:flomosupport/models/guidemodel.dart';
-import 'dart:developer' as developer;
 import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
@@ -18,98 +13,10 @@ class Guide extends StatefulWidget {
 }
 
 class GuideState extends State<Guide> {
-  // List<Template> templatesdata = [];
-  // // 新增的状态变量
-  // String? _selectedClassItem; // null 表示选中 "全部"
-  // List<String> _uniqueClassItems = []; // 存储所有不重复的 classItems
-  // final StorageService _StorageService = StorageService();
-  // final ClassItemService _classItemService = ClassItemService();
-
   @override
   void initState() {
     super.initState();
-    // _selectedClassItem = null;
-    // _initializeData();
   }
-
-  // Future<void> _initializeData() async {
-  //   await _loadAllData();
-  // }
-
-  // Future<void> _loadAllData() async {
-  //   // 1. 从 TemplateService 加载模板数据
-  //   try {
-  //     final loadedTemplates = await _StorageService.loadTemplates();
-  //     if (mounted) {
-  //       setState(() {
-  //         templatesdata = loadedTemplates;
-  //       });
-  //       developer.log("Successfully loaded templates data from service.");
-  //     }
-  //   } catch (e) {
-  //     developer.log('加载模板失败: $e');
-  //     if (mounted) {
-  //       showSnackbar(context, '加载模板失败: ${e.toString()}', isError: true);
-  //     }
-  //     // 即使加载失败，也确保模板数据是空的，防止空指针
-  //     if (mounted) {
-  //       setState(() {
-  //         templatesdata = [];
-  //       });
-  //     }
-  //   }
-
-  //   // 2. 从 ClassItemService 加载分类数据
-  //   try {
-  //     final loadedClassItems = await _classItemService.loadClassItems();
-  //     if (mounted) {
-  //       setState(() {
-  //         _uniqueClassItems =
-  //             loadedClassItems; // ClassItemService 返回的是 List<String>，并保持顺序
-  //       });
-  //       developer.log("Successfully loaded class items from service.");
-  //     }
-  //   } catch (e) {
-  //     developer.log('加载分类失败: $e');
-  //     if (mounted) {
-  //       showSnackbar(context, '加载分类失败: ${e.toString()}', isError: true);
-  //     }
-  //     if (mounted) {
-  //       setState(() {
-  //         _uniqueClassItems = [];
-  //       });
-  //     }
-  //   }
-
-  //   // 确保在数据加载完成后，如果 class_items.json 为空，可以从现有模板中提取并保存
-  //   // 这一步最好在 NewguideState 保存模板时触发 ClassItemService 的更新，
-  //   // 但为了鲁棒性，在 Guide 页面首次加载时也可以检查并处理。
-  //   // 注意：如果 NewguideState 已经确保了 ClassItemService 的数据完整性，这里可以省略此检查。
-  //   if (_uniqueClassItems.isEmpty && templatesdata.isNotEmpty) {
-  //     await _classItemService.extractAndSaveFromTemplates(templatesdata);
-  //     // 重新加载以获取最新保存的分类
-  //     final reloadedClassItems = await _classItemService.loadClassItems();
-  //     if (mounted) {
-  //       setState(() {
-  //         _uniqueClassItems = reloadedClassItems;
-  //       });
-  //     }
-  //   }
-  // }
-
-  // List<Template> get _filteredTemplates {
-  //   if (_selectedClassItem == null) {
-  //     // 如果选中“全部”，返回所有模板
-  //     return templatesdata;
-  //   } else {
-  //     // 否则，只返回包含选中 classItem 的模板
-  //     return templatesdata.where((template) {
-  //       // 只有当模板的 classitems 不为 null 且包含选中的 classItem 时才显示
-  //       return template.classitems != null &&
-  //           template.classitems!.contains(_selectedClassItem!);
-  //     }).toList();
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

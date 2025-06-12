@@ -134,12 +134,6 @@ abstract class AppLocalizations {
   /// **'通知'**
   String get notificationPageTitle;
 
-  /// No description provided for @helloMessage.
-  ///
-  /// In zh, this message translates to:
-  /// **'你好，{userName}！'**
-  String helloMessage(Object userName);
-
   /// No description provided for @welcomeButton.
   ///
   /// In zh, this message translates to:

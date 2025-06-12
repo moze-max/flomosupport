@@ -23,8 +23,7 @@ class ClassItemNotifier extends ChangeNotifier {
     // 加载所有模板
     final List<Template> loadedTemplates = await StorageService.loadTemplates();
 
-    _uniqueClassItems = loadedClassItems.toSet().toList(); // 确保唯一性并排序
-    _uniqueClassItems.sort();
+    _uniqueClassItems = loadedClassItems; // 确保唯一性并排序
     _allTemplates = loadedTemplates;
     _filterTemplates(); // 重新过滤模板
 

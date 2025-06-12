@@ -24,13 +24,6 @@
   "@notificationPageTitle": {
     "description": "Title for the notifications page"
   },
-  "helloMessage": "Hello, {userName}!",
-  "@helloMessage": {
-    "description": "A greeting message with a user name placeholder",
-    "placeholders": {
-      "userName": {}
-    }
-  },
   "welcomeButton": "Welcome",
   "@welcomeButton": {
     "description": "Text for a welcome button"
