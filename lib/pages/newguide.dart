@@ -6,7 +6,6 @@ import 'package:flomosupport/models/guidemodel.dart'; // 确保路径正确
 import 'package:flomosupport/components/dialog_components.dart';
 import 'package:flomosupport/functions/image_picker_service.dart'; // 假设你有一个 showSnackbar 辅助函数
 import 'package:flomosupport/functions/storage_service.dart';
-import 'package:flomosupport/functions/class_items.dart';
 import 'package:provider/provider.dart';
 
 class Newguide extends StatefulWidget {
@@ -21,7 +20,6 @@ class NewguideState extends State<Newguide> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _classItemController = TextEditingController();
   final ImagePickerService _imagePickerService = ImagePickerService();
-  final StorageService _StorageService = StorageService();
   final List<String> _useritems = [];
   // List<String> _availableClassItems = []; // 由 ClassItemService 填充，保持顺序
   final Set<String> _selectedClassItems =
@@ -33,81 +31,6 @@ class NewguideState extends State<Newguide> {
     super.initState();
     // _initializeData();
   }
-
-  // Future<void> _initializeData() async {
-  //   final loadedTemplates = await _StorageService.loadTemplates();
-  //   if (mounted) {
-  //     setState(() {
-  //       _templates = loadedTemplates;
-  //     });
-  //   }
-
-  //   // 从 ClassItemService 加载 List<String>
-  //   List<String> loadedClassItems = await _classItemService.loadClassItems();
-
-  //   if (loadedClassItems.isEmpty && _templates.isNotEmpty) {
-  //     await _classItemService.extractAndSaveFromTemplates(_templates);
-  //     loadedClassItems = await _classItemService.loadClassItems();
-  //   }
-
-  //   if (mounted) {
-  //     setState(() {
-  //       _availableClassItems = loadedClassItems;
-  //     });
-  //   }
-  // }
-
-  // void _addCustomClassItem() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       String newClassItem = '';
-  //       return AlertDialog(
-  //         title: const Text('添加新分类'),
-  //         content: TextField(
-  //           autofocus: true,
-  //           decoration: const InputDecoration(hintText: '输入分类名称'),
-  //           onChanged: (value) {
-  //             newClassItem = value.trim();
-  //           },
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //             },
-  //             child: const Text('取消'),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () async {
-  //               if (newClassItem.isNotEmpty) {
-  //                 // 通过服务添加并保存
-  //                 await _classItemService.addAndSaveClassItem(newClassItem);
-
-  //                 // 更新本地 UI 状态 (如果 service 已处理了唯一性，这里只需添加)
-  //                 if (mounted) {
-  //                   setState(() {
-  //                     // 确保本地列表也添加，且不重复
-  //                     if (!_availableClassItems.contains(newClassItem)) {
-  //                       _availableClassItems.add(newClassItem);
-  //                     }
-  //                     _selectedClassItems.add(newClassItem); // 添加后默认选中
-  //                   });
-  //                   if (context.mounted) {
-  //                     Navigator.pop(context);
-  //                   }
-  //                 }
-  //               } else {
-  //                 showSnackbar(context, '分类名称不能为空！', isError: true);
-  //               }
-  //             },
-  //             child: const Text('添加'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   Future<void> _pickImage() async {
     final File? image = await _imagePickerService.pickImageFromGallery();
@@ -136,6 +59,7 @@ class NewguideState extends State<Newguide> {
       return;
     }
     if (newClassItem != null && newClassItem.isNotEmpty) {
+      if (!mounted) return;
       final classItemNotifier =
           Provider.of<ClassItemNotifier>(context, listen: false);
       if (classItemNotifier.uniqueClassItems.contains(newClassItem)) {
@@ -152,6 +76,7 @@ class NewguideState extends State<Newguide> {
       setState(() {
         _selectedClassItems.add(newClassItem);
       });
+      if (!mounted) return;
       showSnackbar(context, '新分类已添加');
     }
   }
@@ -184,49 +109,14 @@ class NewguideState extends State<Newguide> {
 
     // ⭐ 通知 ClassItemNotifier 刷新所有数据（包括模板）
     if (!context.mounted) return;
+    if (!mounted) return;
     final classItemNotifier =
         Provider.of<ClassItemNotifier>(context, listen: false);
     await classItemNotifier.refreshAllData();
-
+    if (!mounted) return;
     showSnackbar(context, '模板保存成功！');
     Navigator.pop(context, true); // 返回 true 表示数据已更新
   }
-
-  // Future<void> _createAndPersistNewTemplate() async {
-  //   if (_nameController.text.isEmpty) {
-  //     showSnackbar(context, '模板名称不能为空！', isError: true);
-  //     return;
-  //   }
-  //   if (_useritems.isEmpty) {
-  //     showSnackbar(context, '模板条目不能为空！', isError: true);
-  //     return;
-  //   }
-
-  //   // Call the refactored saveNewTemplate method from StorageService
-  //   final savedTemplate = await StorageService.saveNewTemplate(
-  //     name: _nameController.text,
-  //     items: _useritems,
-  //     pickedImage: _pickedImage,
-  //     classitems: _selectedClassItems.toList(),
-  //   );
-
-  //   if (mounted) {
-  //     if (savedTemplate != null) {
-  //       setState(() {
-  //         _templates.add(
-  //             savedTemplate); // Add the newly saved template to your local list
-  //       });
-  //       showSnackbar(context, '模板保存成功！');
-  //       _nameController.clear(); // 清空名称输入框
-  //       _useritems.clear(); // 清空当前条目列表
-  //       _pickedImage = null; // 清空已选择的图片
-  //       _selectedClassItems.clear();
-  //       Navigator.pop(context, true); // 返回上一页并传递成功结果
-  //     } else {
-  //       showSnackbar(context, '模板保存失败，请重试！', isError: true);
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
