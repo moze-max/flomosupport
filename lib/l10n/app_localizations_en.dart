@@ -129,4 +129,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsettingTitle => 'NotificationSetting';
+
+  @override
+  String get classItemManagement => 'ClassItemsManage';
 }

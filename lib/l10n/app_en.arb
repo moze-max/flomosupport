@@ -82,6 +82,7 @@
     "currentSavedKeyInfo": "Current API Key Info",
     "apiKeyInputLabel": "API Key",
     "apiKeyEmptyWarning": "API key cannot be empty!",
-    "notificationsettingTitle":"NotificationSetting"
+    "notificationsettingTitle":"NotificationSetting",
+    "classItemManagement":"ClassItemsManage"
 
 }

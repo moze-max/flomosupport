@@ -44,5 +44,6 @@
   "personalInfoCollection": "个人信息收集清单",
   "thirdPartyInfoSharing": "第三方个人信息共享清单",
   "personalInfoProtection": "个人信息保护设置",
-  "notificationsettingTitle":"通知设置"
+  "notificationsettingTitle":"通知设置",
+  "classItemManagement":"分类管理"
 }

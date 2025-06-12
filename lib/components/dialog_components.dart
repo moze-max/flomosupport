@@ -107,3 +107,77 @@ Future<String?> showAddItemDialog(BuildContext context) async {
   itemsInputController.dispose();
   return result;
 }
+
+Future<String?> showAddClassItemDialog(BuildContext context) async {
+  final TextEditingController textController = TextEditingController();
+  final String? enteredText = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('添加分类'),
+          content: TextField(
+            autofocus: true,
+            controller: textController,
+            decoration: InputDecoration(hintText: '输入条目内容'),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(null);
+                },
+                child: const Text('Cancel')),
+            ElevatedButton(
+                onPressed: () {
+                  final String trimmedText = textController.text.trim();
+                  if (trimmedText.isNotEmpty) {
+                    Navigator.of(dialogContext).pop(trimmedText);
+                  } else {
+                    showConfirmationDialog(context,
+                        title: "请再检查一下", content: "现在好像还没有内容哦？");
+                  }
+                },
+                child: const Text('添加'))
+          ],
+        );
+      });
+  textController.dispose();
+  return enteredText;
+}
+
+Future<bool?> showConfirmationDialog(
+  BuildContext context, {
+  required String title,
+  required String content,
+  String confirmButtonText = '确定',
+  String cancelButtonText = '取消',
+  Color? confirmButtonColor,
+}) async {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(cancelButtonText),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: confirmButtonColor ??
+                  Theme.of(context).colorScheme.error, // 默认删除是红色
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            child: Text(confirmButtonText),
+          ),
+        ],
+      );
+    },
+  );
+}

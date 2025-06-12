@@ -8,6 +8,7 @@ import 'package:flomosupport/pages/article/privacy/info.dart';
 import 'package:flomosupport/pages/article/privacy/privacy_tip.dart';
 import 'package:flomosupport/pages/article/privacy/security.dart';
 import 'package:flomosupport/pages/article/privacy/sharelist.dart';
+import 'package:flomosupport/pages/class_items_management.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
@@ -268,11 +269,16 @@ class _ArticleState extends State<Article> {
                   },
                 ),
                 SettingsListItem(
-                  key: const Key('personalizationItem'),
-                  icon: Icons.brush,
-                  title: appLocalizations.personalization,
+                  key: const Key('ClassItemManagement'),
+                  icon: Icons.align_horizontal_left_rounded,
+                  title: appLocalizations.classItemManagement,
                   onTap: () {
-                    // 导航到个性装扮设置
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const ClassItemManagementPage()),
+                    );
                   },
                 ),
                 SettingsListItem(

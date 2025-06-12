@@ -4,7 +4,6 @@ import 'package:flomosupport/models/guidemodel.dart';
 import 'package:flomosupport/functions/storage_service.dart';
 import 'package:flomosupport/components/dialog_components.dart';
 
-// **解耦后的删除处理函数**
 Future<bool> handleDeleteTemplateLogic(
     {required BuildContext context, required Template templateToDelete}) async {
   if (!context.mounted) {
@@ -18,7 +17,7 @@ Future<bool> handleDeleteTemplateLogic(
       context: contextCopy, template: templateToDelete);
 
   if (confirm == true) {
-    bool deleted = await StorageService.deleteTemplate(templateToDelete);
+    bool deleted = await StorageService.deleteTemplate(templateToDelete.id);
     if (contextCopy.mounted) {
       // 再次检查 context 是否 mounted
       if (deleted) {

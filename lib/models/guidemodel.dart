@@ -54,8 +54,11 @@ class Template {
     return Template(
       id: json['id'] as String,
       name: json['name'] as String,
-      classitems:
-          (json['classitems'] as List<dynamic>?)?.cast<String>().toList(),
+      // classitems:
+      // (json['classitems'] as List<dynamic>?)?.cast<String>().toList(),
+      classitems: (json['classitems'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       items: (json['items'] as List<dynamic>?)?.cast<String>().toList() ??
           const [],
       imagePath: json['imagePath'] as String?,

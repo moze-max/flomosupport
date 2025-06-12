@@ -331,6 +331,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'通知设置'**
   String get notificationsettingTitle;
+
+  /// No description provided for @classItemManagement.
+  ///
+  /// In zh, this message translates to:
+  /// **'分类管理'**
+  String get classItemManagement;
 }
 
 class _AppLocalizationsDelegate

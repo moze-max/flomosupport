@@ -126,4 +126,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationsettingTitle => '通知设置';
+
+  @override
+  String get classItemManagement => '分类管理';
 }
