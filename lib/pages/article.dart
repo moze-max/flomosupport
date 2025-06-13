@@ -77,7 +77,6 @@ class _ArticleState extends State<Article> {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-    final bool canPop = Navigator.of(context).canPop();
     final File? currentAvatar =
         Provider.of<AvatarNotifier>(context, listen: true).currentAvatar;
     return Scaffold(
@@ -86,20 +85,11 @@ class _ArticleState extends State<Article> {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: canPop
-                  ? const Icon(Icons.arrow_back_ios_new)
-                  : const Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               onPressed: () {
-                if (canPop) {
-                  Navigator.pop(context); // 返回上一页
-                } else {
-                  // 打开抽屉
-                  widget.scaffoldKey.currentState?.openDrawer();
-                }
+                widget.scaffoldKey.currentState?.openDrawer();
               },
-              tooltip: canPop
-                  ? MaterialLocalizations.of(context).backButtonTooltip
-                  : MaterialLocalizations.of(context).openAppDrawerTooltip,
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
           },
         ),

@@ -22,30 +22,19 @@ class GuideState extends State<Guide> {
   Widget build(BuildContext context) {
     final classItemNotifier = Provider.of<ClassItemNotifier>(context);
     final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
-    // 获取当前路由是否可以被pop，用于 AppBar leading 按钮的显示
-    final bool canPop = Navigator.of(context).canPop();
     final ThemeData currentTheme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(appLocalizations.guidePageTitle),
         centerTitle: true, // 标题居中
-        // 根据 canPop 动态显示 leading 按钮
-        leading: canPop
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new),
-                onPressed: () {
-                  Navigator.pop(context); // 返回上一页
-                },
-              )
-            : IconButton(
-                icon: const Icon(Icons.menu), // 抽屉菜单图标
-                onPressed: () {
-                  widget.scaffoldKey.currentState
-                      ?.openDrawer(); // 通过 HomePage 的 ScaffoldKey 打开抽屉
-                },
-                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-              ),
+        leading: IconButton(
+          icon: const Icon(Icons.menu), // 抽屉菜单图标
+          onPressed: () {
+            widget.scaffoldKey.currentState?.openDrawer();
+          },
+          tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.add,

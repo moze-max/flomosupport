@@ -1,9 +1,6 @@
 import 'package:flomosupport/pages/user_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
-// import 'package:flomosupport/pages/getimageshare.dart';
-// import 'article.dart';
-// import 'guide.dart';
 
 class Homepage extends StatefulWidget {
   final List<Widget> pages;
