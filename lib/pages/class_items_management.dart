@@ -23,7 +23,6 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
   }
 
   Future<void> _loadClassItems() async {
-    // ⭐ 从 StorageService 加载数据到本地状态
     final loadedItems = await StorageService.loadClassItems();
     if (mounted) {
       setState(() {
@@ -41,10 +40,8 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
       _classItems.insert(newIndex, item);
     });
 
-    // ⭐ 保存新的排序到存储
     await StorageService.saveClassItems(_classItems);
 
-    // ⭐ 关键一步：获取 ClassItemNotifier 并通知它刷新数据
     if (!context.mounted) return;
     if (!mounted) {
       return;
@@ -196,15 +193,11 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
                               ),
                             ),
                           ),
-                          // ⭐ 确保 trailing 只有删除图标，没有额外的拖拽图标
-                          // 如果你看到了一个 == 图标在删除图标旁边，那很可能是 ReorderableListView 的默认行为
-                          // 强制它只识别 ReorderableDragStartListener 作为拖拽目标
                           IconButton(
                             icon: Icon(Icons.delete,
                                 color: currentTheme.colorScheme.error),
                             onPressed: () => _deleteClassItem(item),
                           ),
-                          // 确保这里没有其他 widget 可能会被误认为是拖拽手柄
                         ],
                       ),
                     ),
@@ -212,11 +205,9 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
                 );
               },
               onReorder: _onReorder,
-              // ⭐⭐⭐ 拖拽时的视觉优化 ⭐⭐⭐
               proxyDecorator:
                   (Widget child, int index, Animation<double> animation) {
                 return AnimatedBuilder(
-                  // 使用 AnimatedBuilder 确保每次动画值变化时都重建
                   animation: animation,
                   builder: (BuildContext context, Widget? childToAnimate) {
                     final double elevation = 8.0 * animation.value; // 拖拽时阴影逐渐增大
@@ -225,15 +216,14 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
                     return Transform.scale(
                       scale: scale,
                       child: Material(
-                        // 使用 Material 包裹以应用阴影
                         elevation: elevation,
-                        color: Colors.transparent, // ⭐ 拖拽时背景完全透明
-                        shadowColor: Colors.black..withAlpha(77), // 设置阴影颜色
+                        color: Colors.transparent,
+                        shadowColor: Colors.black..withAlpha(77),
                         child: childToAnimate,
                       ),
                     );
                   },
-                  child: child, // 将原始的 child 传递给 AnimatedBuilder 的 child 参数
+                  child: child,
                 );
               },
             ),
