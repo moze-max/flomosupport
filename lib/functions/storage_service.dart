@@ -376,7 +376,7 @@ class StorageService {
     final directory = await getApplicationDocumentsDirectory();
     // 3. 使用 _fileSystem 创建 Directory 和 File 对象
     final appDir =
-        _fileSystem.directory(path.join(directory!.path, _appFolderName));
+        _fileSystem.directory(path.join(directory.path, _appFolderName));
     if (!await appDir.exists()) {
       await appDir.create(recursive: true);
     }
@@ -387,7 +387,7 @@ class StorageService {
   static Future<Directory> _getImageDirectory() async {
     final directory = await getApplicationDocumentsDirectory();
     final imageDirPath =
-        path.join(directory!.path, _appFolderName, _imageDirName);
+        path.join(directory.path, _appFolderName, _imageDirName);
     // 3. 使用 _fileSystem 创建 Directory 对象
     final Directory imageDir = _fileSystem.directory(imageDirPath);
 
@@ -400,7 +400,7 @@ class StorageService {
   static Future<Directory> _getAvatarDirectory() async {
     final directory = await getApplicationDocumentsDirectory();
     final avatarDirPath =
-        path.join(directory!.path, _appFolderName, _avatarDirName);
+        path.join(directory.path, _appFolderName, _avatarDirName);
     // 3. 使用 _fileSystem 创建 Directory 对象
     final Directory avatarDir = _fileSystem.directory(avatarDirPath);
     if (!await avatarDir.exists()) {
