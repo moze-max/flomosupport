@@ -352,9 +352,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:flomosupport/models/guidemodel.dart';
 
-// 引入 file package
 import 'package:file/file.dart';
-import 'package:file/local.dart'; // 用于实际文件系统
+import 'package:file/local.dart';
 
 class StorageService {
   static const String _appFolderName = 'flomosupport';

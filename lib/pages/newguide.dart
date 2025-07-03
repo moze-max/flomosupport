@@ -18,12 +18,9 @@ class Newguide extends StatefulWidget {
 class NewguideState extends State<Newguide> {
   // List<Template> _templates = [];
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _classItemController = TextEditingController();
   final ImagePickerService _imagePickerService = ImagePickerService();
   final List<String> _useritems = [];
-  // List<String> _availableClassItems = []; // 由 ClassItemService 填充，保持顺序
-  final Set<String> _selectedClassItems =
-      {}; // 当前模板已选中的 classitems (仍为 Set，因为选中不关心顺序)
+  final Set<String> _selectedClassItems = {}; // 当前模板已选中的 classitems
   File? _pickedImage; // 用于存储用户选择的图片文件
 
   @override
@@ -179,37 +176,13 @@ class NewguideState extends State<Newguide> {
                                   color: currentTheme.colorScheme.onSurface),
                             ),
                             const SizedBox(height: 16),
-                            // Wrap(
-                            //   spacing: 8.0,
-                            //   children: classItemNotifier.uniqueClassItems
-                            //       .map((item) {
-                            //     // 从 Notifier 获取分类
-                            //     return ChoiceChip(
-                            //       label: Text(item),
-                            //       selected: _selectedClassItems.contains(item),
-                            //       onSelected: (selected) {
-                            //         setState(() {
-                            //           if (selected) {
-                            //             _selectedClassItems.add(item);
-                            //           } else {
-                            //             _selectedClassItems.remove(item);
-                            //           }
-                            //         });
-                            //       },
-                            //     );
-                            //   }).toList(),
-                            // ),
-                            // ElevatedButton(
-                            //   onPressed: _handleAddNewClassItem,
-                            //   child: const Text('添加新分类'),
-                            // ),
                             SizedBox(
                               height: 50, // 高度固定
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount:
                                     classItemNotifier.uniqueClassItems.length +
-                                        1, // +1 for the add button
+                                        1,
                                 itemBuilder: (context, index) {
                                   if (index ==
                                       classItemNotifier
@@ -331,8 +304,6 @@ class NewguideState extends State<Newguide> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            // 条目列表区域（Card包裹）
-                            // 考虑让这个Card可以拉伸，或者在其之后添加Spacer
                             SizedBox(
                               height: 200, // 保持固定高度的列表
                               child: Card(
@@ -388,13 +359,8 @@ class NewguideState extends State<Newguide> {
                                 ),
                               ),
                             ),
-
-                            // 这是实现拉伸效果的关键！
-                            // Spacer 会填充所有剩余的垂直空间，将下面的按钮推到底部
-                            const Spacer(), // <-- 添加 Spacer
-
-                            const SizedBox(height: 16), // 按钮上方的间距
-                            // 按钮行：添加条目 & 保存模板
+                            const Spacer(),
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -440,22 +406,9 @@ class NewguideState extends State<Newguide> {
         ));
   }
 
-  // void _handleAddItem() async {
-  //   // Capture the result from the dialog
-  //   final String? newItem = await showAddItemDialog(context);
-
-  //   // Check if a valid item was returned (not null and not empty)
-  //   if (newItem != null && newItem.isNotEmpty) {
-  //     setState(() {
-  //       _useritems.add(newItem); // Add the item to your local list
-  //     });
-  //   }
-  // }
-
   @override
   void dispose() {
     _nameController.dispose();
-    _classItemController.dispose();
     super.dispose();
   }
 }

@@ -80,7 +80,6 @@ Future<String?> showAddItemDialog(BuildContext context) async {
                 result = itemsInputController.text.trim();
                 Navigator.pop(dialogContext, result);
               } else {
-                // Show a local snackbar within the dialog context
                 ScaffoldMessenger.of(dialogContext).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -103,13 +102,13 @@ Future<String?> showAddItemDialog(BuildContext context) async {
     },
   );
 
-  // Dispose controller after dialog is dismissed
   itemsInputController.dispose();
   return result;
 }
 
 Future<String?> showAddClassItemDialog(BuildContext context) async {
-  final TextEditingController textController = TextEditingController();
+  final TextEditingController addClassController = TextEditingController();
+  String? result;
   final String? enteredText = await showDialog<String>(
       context: context,
       builder: (dialogContext) {
@@ -117,7 +116,7 @@ Future<String?> showAddClassItemDialog(BuildContext context) async {
           title: Text('添加分类'),
           content: TextField(
             autofocus: true,
-            controller: textController,
+            controller: addClassController,
             decoration: InputDecoration(hintText: '输入条目内容'),
           ),
           actions: [
@@ -125,22 +124,31 @@ Future<String?> showAddClassItemDialog(BuildContext context) async {
                 onPressed: () {
                   Navigator.of(dialogContext).pop(null);
                 },
-                child: const Text('Cancel')),
+                child: const Text('取消')),
             ElevatedButton(
                 onPressed: () {
-                  final String trimmedText = textController.text.trim();
+                  final String trimmedText = addClassController.text.trim();
                   if (trimmedText.isNotEmpty) {
-                    Navigator.of(dialogContext).pop(trimmedText);
+                    result = trimmedText; // 存储有效结果
+                    Navigator.of(dialogContext).pop(result); // 弹出并返回结果
                   } else {
-                    showConfirmationDialog(context,
-                        title: "请再检查一下", content: "现在好像还没有内容哦？");
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '分类内容不能为空！',
+                          style: TextStyle(
+                              color:
+                                  Theme.of(dialogContext).colorScheme.onError),
+                        ),
+                      ),
+                    );
                   }
                 },
                 child: const Text('添加'))
           ],
         );
       });
-  textController.dispose();
+  addClassController.dispose();
   return enteredText;
 }
 
