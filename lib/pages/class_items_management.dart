@@ -52,10 +52,12 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
   }
 
   Future<void> _addCustomClassItem() async {
-    if (!context.mounted) return;
     final String? newClassItem = await showAddClassItemDialog(context);
     if (!context.mounted) {
       return;
+    }
+    if (mounted) {
+      FocusManager.instance.primaryFocus?.unfocus();
     }
     if (newClassItem != null && newClassItem.isNotEmpty) {
       if (_classItems.contains(newClassItem)) {
@@ -64,10 +66,11 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
         }
         return;
       }
+      await StorageService.saveClassItems(_classItems);
       setState(() {
         _classItems.add(newClassItem);
       });
-      await StorageService.saveClassItems(_classItems);
+
       if (!context.mounted) return;
       if (!mounted) return;
       final classItemNotifier =

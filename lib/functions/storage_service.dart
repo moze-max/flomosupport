@@ -381,30 +381,57 @@ class StorageService {
   //   return _fileSystem.file(path.join(appDir.path, fileName));
   // }
   static Future<File> _getFile(String fileName) async {
-    developer.log('_GET_FILE: Starting _getFile for $fileName'); // 调试点 1
+    developer.log('_GET_FILE: Starting _getFile for $fileName');
     try {
-      developer.log(
-          '_GET_FILE: Calling getApplicationDocumentsDirectory()'); // 调试点 2
+      developer.log('_GET_FILE: Calling getApplicationDocumentsDirectory()');
       final directory = await getApplicationDocumentsDirectory();
       developer.log(
-          '_GET_FILE: Got application documents directory: ${directory.path}'); // 调试点 3
+          '_GET_FILE: Got application documents directory: ${directory.path}');
 
       final appDir =
           _fileSystem.directory(path.join(directory.path, _appFolderName));
-      developer.log(
-          '_GET_FILE: Checking if app directory exists: ${appDir.path}'); // 调试点 4
-      if (!await appDir.exists()) {
+      developer
+          .log('_GET_FILE: Checking if app directory exists: ${appDir.path}');
+
+      bool exists = false;
+      try {
+        // 为 exists() 检查添加超时，5秒后如果还没返回，则认为不存在或不可访问
+        exists = await appDir.exists().timeout(const Duration(seconds: 5),
+            onTimeout: () {
+          developer.log(
+              '_GET_FILE: appDir.exists() timed out. Assuming directory does not exist or is inaccessible.');
+          return false; // 超时则假定目录不存在或无法访问
+        });
+      } on Exception catch (e) {
         developer.log(
-            '_GET_FILE: App directory does not exist. Creating recursively.'); // 调试点 5
-        await appDir.create(recursive: true);
-        developer.log('_GET_FILE: App directory created.'); // 调试点 6
-      } else {
-        developer.log('_GET_FILE: App directory already exists.'); // 调试点 7
+            '_GET_FILE: Error during appDir.exists() check: $e. Assuming directory does not exist.');
+        exists = false; // 任何错误也当作不存在处理
       }
-      developer.log('_GET_FILE: Returning File object for $fileName.'); // 调试点 8
+
+      if (!exists) {
+        developer.log(
+            '_GET_FILE: App directory does not exist or was inaccessible. Creating recursively.');
+        try {
+          // 为 create() 调用也添加超时
+          await appDir
+              .create(recursive: true)
+              .timeout(const Duration(seconds: 5), onTimeout: () {
+            developer.log('_GET_FILE: appDir.create() timed out.');
+            throw Exception(
+                'Failed to create app directory: Timeout'); // 如果创建超时，则抛出异常
+          });
+          developer.log('_GET_FILE: App directory created.');
+        } on Exception catch (e) {
+          developer.log('_GET_FILE: Error creating app directory: $e');
+          rethrow; // 重新抛出创建过程中的任何错误
+        }
+      } else {
+        developer.log('_GET_FILE: App directory already exists.');
+      }
+      developer.log('_GET_FILE: Returning File object for $fileName.');
       return _fileSystem.file(path.join(appDir.path, fileName));
     } catch (e) {
-      developer.log('_GET_FILE: Error in _getFile: $e'); // 调试点 9
+      developer.log('_GET_FILE: Final Error in _getFile: $e');
       rethrow;
     }
   }
@@ -559,19 +586,9 @@ class StorageService {
   //   }
   // }
   static Future<void> saveClassItems(List<String> classItems) async {
-    developer.log('SAVE CLASS ITEMS: Starting save operation.'); // 调试点 1
     try {
-      developer.log(
-          'SAVE CLASS ITEMS: Getting file object for $_classItemsFileName.'); // 调试点 2
       final file = await _getFile(_classItemsFileName);
-
-      developer.log('SAVE CLASS ITEMS: File path: ${file.path}'); // 调试点 3
-      developer.log('SAVE CLASS ITEMS: Encoding class items to JSON.'); // 调试点 4
       final String jsonString = json.encode(classItems);
-
-      developer.log(
-          'SAVE CLASS ITEMS: JSON string length: ${jsonString.length}'); // 调试点 5
-      developer.log('SAVE CLASS ITEMS: Writing JSON string to file.'); // 调试点 6
       await file.writeAsString(jsonString); // 冻结可能发生在这里
 
       developer
@@ -599,8 +616,6 @@ class StorageService {
       final File newImage = _fileSystem.file(newPath);
       await newImage
           .writeAsBytes(await pickedImage.readAsBytes()); // Copy content
-
-      developer.log("Image saved to: ${newImage.path}");
       return newImage.path;
     } catch (e) {
       developer.log("Error saving image to local storage: $e");
@@ -757,10 +772,7 @@ class StorageService {
 
       final List<FileSystemEntity> files = avatarDir.listSync();
       for (final FileSystemEntity entity in files) {
-        // 10. 确保正确地处理 FileSystemEntity 类型，它可能是 _fileSystem.File 或 _fileSystem.Directory
-        // 并且如果它是一个 File，检查其路径
         if (entity is File) {
-          // _fileSystem.File extends FileSystemEntity
           if (currentAvatarPath == null || entity.path != currentAvatarPath) {
             await entity.delete();
             developer.log("Cleaned up old avatar file: ${entity.path}");
