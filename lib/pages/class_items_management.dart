@@ -67,9 +67,7 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
       setState(() {
         _classItems.add(newClassItem);
       });
-      // ⭐ 保存新的分类到存储
       await StorageService.saveClassItems(_classItems);
-      // ⭐ 通知 ClassItemNotifier 刷新数据
       if (!context.mounted) return;
       if (!mounted) return;
       final classItemNotifier =
@@ -146,8 +144,7 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
               child: Text(
                 '暂无分类，点击右下角按钮添加',
                 style: currentTheme.textTheme.bodyLarge?.copyWith(
-                  color: currentTheme.colorScheme.onSurface
-                      .withAlpha(153), // 使用 withOpacity 更通用
+                  color: currentTheme.colorScheme.onSurface.withAlpha(153),
                 ),
                 textAlign: TextAlign.center,
               ),

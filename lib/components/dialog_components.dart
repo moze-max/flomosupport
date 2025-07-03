@@ -109,7 +109,7 @@ Future<String?> showAddItemDialog(BuildContext context) async {
 Future<String?> showAddClassItemDialog(BuildContext context) async {
   final TextEditingController addClassController = TextEditingController();
   String? result;
-  final String? enteredText = await showDialog<String>(
+  await showDialog<String>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
@@ -149,7 +149,7 @@ Future<String?> showAddClassItemDialog(BuildContext context) async {
         );
       });
   addClassController.dispose();
-  return enteredText;
+  return result;
 }
 
 Future<bool?> showConfirmationDialog(

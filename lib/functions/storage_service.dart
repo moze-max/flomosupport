@@ -373,7 +373,6 @@ class StorageService {
   /// Private helper to get the File object for a given data filename
   static Future<File> _getFile(String fileName) async {
     final directory = await getApplicationDocumentsDirectory();
-    // 3. 使用 _fileSystem 创建 Directory 和 File 对象
     final appDir =
         _fileSystem.directory(path.join(directory.path, _appFolderName));
     if (!await appDir.exists()) {
@@ -507,14 +506,17 @@ class StorageService {
         }
         final List<dynamic> jsonList = json.decode(contents) as List;
         return jsonList.map((e) => e.toString()).toList();
+      } else {
+        developer.log(
+            'Class items file not found. Returning and saving default list.');
+        final defaultItems = ['生活', '工作', '学习'];
+        await saveClassItems(defaultItems);
+        return defaultItems;
       }
     } catch (e) {
       developer.log('Error loading class items: $e');
+      return ['生活', '工作', '学习'];
     }
-    // If file does not exist or error occurs, return a default list for initial setup
-    developer
-        .log('Class items file not found or error. Returning default list.');
-    return ['生活', '工作', '学习']; // Default class items
   }
 
   /// Saves the class items to the local file, overwriting existing data.
