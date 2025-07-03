@@ -371,14 +371,42 @@ class StorageService {
   }
 
   /// Private helper to get the File object for a given data filename
+  // static Future<File> _getFile(String fileName) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final appDir =
+  //       _fileSystem.directory(path.join(directory.path, _appFolderName));
+  //   if (!await appDir.exists()) {
+  //     await appDir.create(recursive: true);
+  //   }
+  //   return _fileSystem.file(path.join(appDir.path, fileName));
+  // }
   static Future<File> _getFile(String fileName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final appDir =
-        _fileSystem.directory(path.join(directory.path, _appFolderName));
-    if (!await appDir.exists()) {
-      await appDir.create(recursive: true);
+    developer.log('_GET_FILE: Starting _getFile for $fileName'); // 调试点 1
+    try {
+      developer.log(
+          '_GET_FILE: Calling getApplicationDocumentsDirectory()'); // 调试点 2
+      final directory = await getApplicationDocumentsDirectory();
+      developer.log(
+          '_GET_FILE: Got application documents directory: ${directory.path}'); // 调试点 3
+
+      final appDir =
+          _fileSystem.directory(path.join(directory.path, _appFolderName));
+      developer.log(
+          '_GET_FILE: Checking if app directory exists: ${appDir.path}'); // 调试点 4
+      if (!await appDir.exists()) {
+        developer.log(
+            '_GET_FILE: App directory does not exist. Creating recursively.'); // 调试点 5
+        await appDir.create(recursive: true);
+        developer.log('_GET_FILE: App directory created.'); // 调试点 6
+      } else {
+        developer.log('_GET_FILE: App directory already exists.'); // 调试点 7
+      }
+      developer.log('_GET_FILE: Returning File object for $fileName.'); // 调试点 8
+      return _fileSystem.file(path.join(appDir.path, fileName));
+    } catch (e) {
+      developer.log('_GET_FILE: Error in _getFile: $e'); // 调试点 9
+      rethrow;
     }
-    return _fileSystem.file(path.join(appDir.path, fileName));
   }
 
   /// Private helper to get the image storage directory
@@ -520,14 +548,37 @@ class StorageService {
   }
 
   /// Saves the class items to the local file, overwriting existing data.
+  // static Future<void> saveClassItems(List<String> classItems) async {
+  //   try {
+  //     final file = await _getFile(_classItemsFileName);
+  //     final String jsonString = json.encode(classItems);
+  //     await file.writeAsString(jsonString);
+  //     developer.log("Class items saved to file: ${file.path}");
+  //   } catch (e) {
+  //     developer.log('Error saving class items: $e');
+  //   }
+  // }
   static Future<void> saveClassItems(List<String> classItems) async {
+    developer.log('SAVE CLASS ITEMS: Starting save operation.'); // 调试点 1
     try {
+      developer.log(
+          'SAVE CLASS ITEMS: Getting file object for $_classItemsFileName.'); // 调试点 2
       final file = await _getFile(_classItemsFileName);
+
+      developer.log('SAVE CLASS ITEMS: File path: ${file.path}'); // 调试点 3
+      developer.log('SAVE CLASS ITEMS: Encoding class items to JSON.'); // 调试点 4
       final String jsonString = json.encode(classItems);
-      await file.writeAsString(jsonString);
-      developer.log("Class items saved to file: ${file.path}");
+
+      developer.log(
+          'SAVE CLASS ITEMS: JSON string length: ${jsonString.length}'); // 调试点 5
+      developer.log('SAVE CLASS ITEMS: Writing JSON string to file.'); // 调试点 6
+      await file.writeAsString(jsonString); // 冻结可能发生在这里
+
+      developer
+          .log('SAVE CLASS ITEMS: Class items saved successfully.'); // 调试点 7
     } catch (e) {
-      developer.log('Error saving class items: $e');
+      developer.log('SAVE CLASS ITEMS: Error saving class items: $e'); // 调试点 8
+      rethrow; // 重新抛出错误，以便调用者可以处理
     }
   }
 
