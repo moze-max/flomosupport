@@ -1,11 +1,8 @@
-import 'package:flomosupport/pages/guide.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'guidepage_test.dart';
 
 // Mock or minimal implementations of dependent pages
 class MockGuide extends StatelessWidget {
@@ -88,31 +85,6 @@ void main() {
       final BottomNavigationBar bottomNav =
           tester.widget(find.byType(BottomNavigationBar));
       expect(bottomNav.currentIndex, 1);
-    });
-  });
-  group('Standalone Guide Page GUI Tests (Using real Guide)', () {
-    testWidgets('测试真实情况下的基本guide页面是否工作正常', (tester) async {
-      final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('zh'),
-          ],
-          locale: const Locale('zh'), // 单独测试时指定 locale
-          home: Guide(scaffoldKey: scaffoldKey), // **这里使用真实的 Guide 页面**
-        ),
-      );
-      await tester.pumpAndSettle();
-      final AppLocalizations l10n =
-          AppLocalizations.of(tester.element(find.byType(Guide)))!;
-      verifybaseGuidePageUI(tester, l10n, scaffoldKey);
     });
   });
 }
