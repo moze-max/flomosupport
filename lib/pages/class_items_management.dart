@@ -66,11 +66,10 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
         }
         return;
       }
-      await StorageService.saveClassItems(_classItems);
       setState(() {
         _classItems.add(newClassItem);
       });
-
+      await StorageService.saveClassItems(_classItems);
       if (!context.mounted) return;
       if (!mounted) return;
       final classItemNotifier =
@@ -107,9 +106,7 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
       setState(() {
         _classItems.remove(itemToDelete);
       });
-      // ⭐ 保存更新后的分类到存储
       await StorageService.saveClassItems(_classItems);
-      // ⭐ 通知 ClassItemNotifier 刷新数据
       if (!context.mounted) return;
       if (!mounted) return;
       final classItemNotifier =
