@@ -164,7 +164,6 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: defaultCardBorderRadius),
                   child: InkWell(
-                    // 替换 ListTile 为 InkWell + Row
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     borderRadius: defaultCardBorderRadius,
@@ -173,7 +172,6 @@ class _ClassItemManagementPageState extends State<ClassItemManagementPage> {
                           horizontal: 16.0, vertical: 12.0),
                       child: Row(
                         children: [
-                          // ⭐ 左侧的拖拽手柄保持不变
                           ReorderableDragStartListener(
                             index: index,
                             child: Icon(Icons.drag_handle,

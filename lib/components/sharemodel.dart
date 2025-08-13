@@ -108,13 +108,13 @@ Widget _buildBorderedCard(BuildContext context, String title, String content) {
   );
 }
 
-final List<shareTemplate> availableTemplates = [
-  shareTemplate(
+final List<ShareTemplate> availableTemplates = [
+  ShareTemplate(
     id: 'simple_gradient',
     name: '渐变卡片',
     builder: _buildSimpleGradientCard,
   ),
-  shareTemplate(
+  ShareTemplate(
     id: 'bordered_minimal',
     name: '简约边框',
     builder: _buildBorderedCard,
