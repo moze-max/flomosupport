@@ -1,4 +1,4 @@
-import 'package:flomosupport/components/get_avataimage.dart';
+import 'package:flomosupport/components/UserAvatarManager.dart';
 import 'package:flutter/material.dart';
 
 class UserAccountPage extends StatefulWidget {
