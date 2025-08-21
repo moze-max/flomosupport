@@ -61,12 +61,9 @@ class AccountsecurityPage extends StatefulWidget {
 class _AccountsecurityPageState extends State<AccountsecurityPage> {
   // 用于控制昵称输入框的控制器
   final TextEditingController _nicknameController = TextEditingController();
-  void _updateNickname(newNickname) {
-    _nickname = newNickname;
-  }
 
   // 假设的昵称值
-  String _nickname = '输入的昵称';
+  final String _nickname = '输入的昵称';
 
   @override
   void initState() {
