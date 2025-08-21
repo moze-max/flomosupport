@@ -1,5 +1,7 @@
 import 'package:flomosupport/components/UserAvatarManager.dart';
+import 'package:flomosupport/functions/nickname_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserAccountPage extends StatefulWidget {
   const UserAccountPage({super.key});
@@ -14,6 +16,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final avatarRadius = screenWidth * 0.12;
     final drawerHeaderHeight = avatarRadius * 2 + 64.0;
+    final String? currentnickname =
+        Provider.of<NicknameNotifier>(context, listen: false).currentNickname;
     EdgeInsets.zero;
     return ListTileTheme(
       selectedTileColor: Colors.blueAccent.withAlpha(128),
@@ -36,10 +40,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       enableActions: true,
                     ),
                     const SizedBox(width: 30),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'moze',
-                        style: TextStyle(
+                        currentnickname as String,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

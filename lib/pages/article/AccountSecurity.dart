@@ -45,9 +45,11 @@
 
 import 'package:flomosupport/components/UserAvatarManager.dart';
 import 'package:flomosupport/functions/image_file_manager.dart';
+import 'package:flomosupport/functions/nickname_notifier.dart';
 import 'package:flomosupport/pages/article/Nickname_Setting_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AccountsecurityPage extends StatefulWidget {
   const AccountsecurityPage({super.key});
@@ -139,25 +141,26 @@ class _AccountsecurityPageState extends State<AccountsecurityPage> {
             const Divider(height: 1, color: Colors.grey),
 
             // 昵称部分
-            _buildProfileItem(
-              title: _nickname,
-              child: Text(
-                _nickname,
-                style: const TextStyle(fontSize: 16),
-              ),
-              onTap: () async {
-                final newNickname = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        NicknameSettingPage(currentNickname: _nickname),
+            Consumer<NicknameNotifier>(
+              builder: (context, nicknameNotifier, child) {
+                return _buildProfileItem(
+                  title: "昵称",
+                  child: Text(
+                    nicknameNotifier.currentNickname ?? '未设置', // 使用 ?? 提供默认值
+                    style: const TextStyle(fontSize: 16),
                   ),
+                  onTap: () {
+                    // 跳转到昵称设置页面，不再需要传递参数
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const NicknameSettingPage(),
+                      ),
+                    );
+                  },
                 );
-                // 如果返回了新的昵称，则更新页面状态
-                if (newNickname != null && newNickname.isNotEmpty) {
-                  _updateNickname(newNickname);
-                }
               },
             ),
+
             const Divider(height: 1, color: Colors.grey),
           ],
         ),

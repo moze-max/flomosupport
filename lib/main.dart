@@ -1,5 +1,6 @@
 import 'package:flomosupport/functions/avatar_notifier.dart';
 import 'package:flomosupport/functions/class_items_notification.dart';
+import 'package:flomosupport/functions/nickname_notifier.dart';
 import 'package:flomosupport/pages/class_items_management.dart';
 import 'package:flomosupport/pages/newguide.dart';
 import 'package:flomosupport/pages/article/about.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AvatarNotifier()),
         ChangeNotifierProvider(create: (_) => ClassItemNotifier()),
+        ChangeNotifierProvider(create: (_) => NicknameNotifier()),
       ],
       child: MaterialApp(
         routes: {

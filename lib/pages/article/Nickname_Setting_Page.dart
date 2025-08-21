@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flomosupport/functions/nickname_notifier.dart';
 
 class NicknameSettingPage extends StatefulWidget {
-  final String currentNickname;
-
-  const NicknameSettingPage({
-    super.key,
-    required this.currentNickname,
-  });
+  const NicknameSettingPage({super.key});
 
   @override
   State<NicknameSettingPage> createState() => _NicknameSettingPageState();
@@ -18,7 +15,11 @@ class _NicknameSettingPageState extends State<NicknameSettingPage> {
   @override
   void initState() {
     super.initState();
-    _nicknameController = TextEditingController(text: widget.currentNickname);
+    // 使用 Provider 获取当前的昵称
+    final nicknameNotifier =
+        Provider.of<NicknameNotifier>(context, listen: false);
+    _nicknameController =
+        TextEditingController(text: nicknameNotifier.currentNickname);
   }
 
   @override
@@ -34,9 +35,18 @@ class _NicknameSettingPageState extends State<NicknameSettingPage> {
         title: const Text('更改名字'),
         actions: [
           TextButton(
-            onPressed: () {
-              // 返回新昵称给上一页
-              Navigator.of(context).pop(_nicknameController.text);
+            onPressed: () async {
+              // 获取 notifier 实例并更新昵称
+              final nicknameNotifier =
+                  Provider.of<NicknameNotifier>(context, listen: false);
+              await nicknameNotifier.updateNickname(_nicknameController.text);
+              // 保存后返回上一页
+              if (mounted) {
+                if (!context.mounted) {
+                  return;
+                }
+                Navigator.of(context).pop();
+              }
             },
             child: const Text('保存', style: TextStyle(color: Colors.blue)),
           ),

@@ -290,9 +290,6 @@ class StorageService {
   // User Info & Avatar Operations
   // ==============================================
 
-  static const String _currentAvatarPathFileName = 'current_avatar_path.txt';
-
-  //
   /// Private helper to read and parse the user info JSON file.
   static Future<Map<String, dynamic>> _readUserInfo() async {
     final file = await _getFile(_userinfoFileName);
@@ -441,24 +438,24 @@ class StorageService {
     }
   }
 
-  static Future<void> _cleanOldAvatars(String? currentAvatarPath) async {
-    try {
-      final avatarDir = await _getAvatarDirectory();
-      if (!await avatarDir.exists()) {
-        return;
-      }
+  // static Future<void> _cleanOldAvatars(String? currentAvatarPath) async {
+  //   try {
+  //     final avatarDir = await _getAvatarDirectory();
+  //     if (!await avatarDir.exists()) {
+  //       return;
+  //     }
 
-      final List<FileSystemEntity> files = avatarDir.listSync();
-      for (final FileSystemEntity entity in files) {
-        if (entity is File) {
-          if (currentAvatarPath == null || entity.path != currentAvatarPath) {
-            await entity.delete();
-            developer.log("Cleaned up old avatar file: ${entity.path}");
-          }
-        }
-      }
-    } catch (e) {
-      developer.log("Error cleaning up old avatars: $e");
-    }
-  }
+  //     final List<FileSystemEntity> files = avatarDir.listSync();
+  //     for (final FileSystemEntity entity in files) {
+  //       if (entity is File) {
+  //         if (currentAvatarPath == null || entity.path != currentAvatarPath) {
+  //           await entity.delete();
+  //           developer.log("Cleaned up old avatar file: ${entity.path}");
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     developer.log("Error cleaning up old avatars: $e");
+  //   }
+  // }
 }
