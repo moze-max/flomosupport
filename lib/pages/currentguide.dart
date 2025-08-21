@@ -45,7 +45,6 @@ class _CurrentguideState extends State<Currentguide> {
                   return;
                 }
                 Navigator.pop(context, true);
-                // 返回 true 给 Guide 页面，表示需要刷新
               }
             },
           ),

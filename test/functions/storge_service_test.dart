@@ -2,6 +2,7 @@ import 'dart:io'
     as io; // Alias dart:io to avoid conflict with file package's File
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart'; // 保持导入，因为 MockPlatformInterfaceMixin 依赖它
 import 'package:plugin_platform_interface/plugin_platform_interface.dart'; // 保持导入，因为 MockPlatformInterfaceMixin 依赖它
 import 'package:uuid/uuid.dart';
@@ -136,27 +137,23 @@ void main() {
       expect(loadedTemplates[1].name, 'Test Template 2');
     });
 
-    test('deleteTemplate deletes a template and its image', () async {
+    test('deleteTemplate deletes a template and its associated image',
+        () async {
       final imageDir = fileSystem.directory(imageDirPath);
       await imageDir.create(recursive: true);
       final dummyImageFile =
-          fileSystem.file('${imageDir.path}/test_image_1.png');
+          fileSystem.file(path.join(imageDir.path, 'test_image_1.png'));
       await dummyImageFile.writeAsString('dummy image data');
 
       final mockUuid1 = MockUuid();
-      final mockUuid2 = MockUuid();
-
-      when(mockUuid1.v4(
-              config: anyNamed('config'), options: anyNamed('options')))
-          .thenReturn('unique-id-1');
-      when(mockUuid2.v4(
-              config: anyNamed('config'), options: anyNamed('options')))
-          .thenReturn('unique-id-2');
-
+      when(mockUuid1.v4()).thenReturn('unique-id-1');
       final templateToDelete = Template.create(
           name: 'Template To Delete',
           imagePath: dummyImageFile.path,
           uuidGenerator: mockUuid1);
+
+      final mockUuid2 = MockUuid();
+      when(mockUuid2.v4()).thenReturn('unique-id-2');
       final templateToKeep =
           Template.create(name: 'Template To Keep', uuidGenerator: mockUuid2);
 
@@ -170,8 +167,8 @@ void main() {
       final loadedTemplates = await StorageService.loadTemplates();
       expect(loadedTemplates.length, 1);
       expect(loadedTemplates[0].id, 'unique-id-2');
-      expect(await fileSystem.file(dummyImageFile.path).exists(),
-          isFalse); // Image should be deleted
+      expect(loadedTemplates[0].name, 'Template To Keep');
+      expect(await fileSystem.file(dummyImageFile.path).exists(), isFalse);
     });
 
     test('deleteTemplate returns false if template not found', () async {

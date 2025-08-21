@@ -22,7 +22,7 @@ class Template {
     List<String>? classitems,
     Uuid? uuidGenerator,
   }) {
-    final uuid = uuidGenerator ?? const Uuid();
+    final uuid = uuidGenerator ?? Uuid();
     return Template(
       id: uuid.v4(), // 自动生成 UUID
       name: name,

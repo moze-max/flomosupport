@@ -1,7 +1,9 @@
+// ignore_for_file: cast_from_null_always_fails
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Assuming your shareTemplate class is in 'lib/models/share_template.dart'
+// Assuming your ShareTemplate class is in 'lib/models/share_template.dart'
 // Adjust this import path to match your project structure
 import 'package:flomosupport/models/share_model.dart';
 
@@ -17,54 +19,45 @@ Widget _dummyBuilder(BuildContext context, String title, String content) {
 }
 
 // Another dummy builder for testing different builder behaviors
-Widget _anotherDummyBuilder(
-    BuildContext context, String title, String content) {
-  return Card(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text('$title - $content'),
-    ),
-  );
-}
 
 void main() {
-  group('shareTemplate', () {
+  group('ShareTemplate', () {
     // --- Constructor Initialization Tests ---
-    test('shareTemplate constructor initializes all properties correctly', () {
-      final shareTemplateInstance = shareTemplate(
+    test('ShareTemplate constructor initializes all properties correctly', () {
+      final ShareTemplateInstance = ShareTemplate(
         id: 'share-id-123',
         name: 'My Shareable Template',
         builder: _dummyBuilder,
       );
 
-      expect(shareTemplateInstance.id, 'share-id-123');
-      expect(shareTemplateInstance.name, 'My Shareable Template');
-      expect(shareTemplateInstance.builder,
+      expect(ShareTemplateInstance.id, 'share-id-123');
+      expect(ShareTemplateInstance.name, 'My Shareable Template');
+      expect(ShareTemplateInstance.builder,
           isA<Widget Function(BuildContext, String, String)>());
-      expect(shareTemplateInstance.builder,
+      expect(ShareTemplateInstance.builder,
           _dummyBuilder); // Check if the exact function reference is stored
     });
 
     // Test that required fields cannot be null
-    test('shareTemplate constructor throws error if id is null', () {
+    test('ShareTemplate constructor throws error if id is null', () {
       expect(
-        () => shareTemplate(
+        () => ShareTemplate(
             id: null as String, name: 'Test', builder: _dummyBuilder),
         throwsA(isA<TypeError>()),
       );
     });
 
-    test('shareTemplate constructor throws error if name is null', () {
+    test('ShareTemplate constructor throws error if name is null', () {
       expect(
-        () => shareTemplate(
+        () => ShareTemplate(
             id: 'some_id', name: null as String, builder: _dummyBuilder),
         throwsA(isA<TypeError>()),
       );
     });
 
-    test('shareTemplate constructor throws error if builder is null', () {
+    test('ShareTemplate constructor throws error if builder is null', () {
       expect(
-        () => shareTemplate(
+        () => ShareTemplate(
             id: 'some_id',
             name: 'Test',
             builder: null as Widget Function(BuildContext, String, String)),
@@ -74,12 +67,12 @@ void main() {
 
     // --- Builder Functionality Tests (using testWidgets) ---
 
-    testWidgets('shareTemplate builder creates a Widget with correct content',
+    testWidgets('ShareTemplate builder creates a Widget with correct content',
         (WidgetTester tester) async {
       const String testTitle = 'Share Title';
       const String testContent = 'This is the shared content.';
 
-      final shareTemplateInstance = shareTemplate(
+      final ShareTemplateInstance = ShareTemplate(
         id: 'builder-test-id',
         name: 'Builder Test Template',
         builder: _dummyBuilder, // Using the dummy builder
@@ -92,7 +85,7 @@ void main() {
           // MaterialApp is often needed for descendant widgets like Text to find Directionality
           home: Builder(
             builder: (BuildContext context) {
-              return shareTemplateInstance.builder(
+              return ShareTemplateInstance.builder(
                   context, testTitle, testContent);
             },
           ),
