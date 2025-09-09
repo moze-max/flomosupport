@@ -1,48 +1,3 @@
-// import 'package:flomosupport/components/get_avataimage.dart';
-// import 'package:flutter/material.dart';
-
-// class AccountsecurityPage extends StatefulWidget {
-//   const AccountsecurityPage({super.key});
-
-//   @override
-//   State<AccountsecurityPage> createState() => _AccountsecurityPageState();
-// }
-
-// class _AccountsecurityPageState extends State<AccountsecurityPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         appBar: AppBar(title: Text('个人信息')),
-//         body: Padding(
-//             padding: EdgeInsets.all(16.0),
-//             child: Column(
-//               children: [
-//                 // 头像部分
-//                 Row(
-//                   crossAxisAlignment: CrossAxisAlignment.stretch,
-//                   children: [
-//                     Text("头像"),
-//                     UserAvatarManager(
-//                       enableActions: true,
-//                     ),
-//                   ],
-//                 ),
-
-//                 const Divider(height: 1, color: Colors.grey),
-
-//                 // 昵称部分
-//                 Row(
-//                   crossAxisAlignment: CrossAxisAlignment.stretch,
-//                   children: [
-//                     Text("昵称"),
-//                   ],
-//                 ),
-//                 const Divider(height: 1, color: Colors.grey),
-//               ],
-//             )));
-//   }
-// }
-
 import 'package:flomosupport/components/UserAvatarManager.dart';
 import 'package:flomosupport/functions/image_file_manager.dart';
 import 'package:flomosupport/functions/nickname_notifier.dart';
@@ -143,7 +98,7 @@ class _AccountsecurityPageState extends State<AccountsecurityPage> {
                 return _buildProfileItem(
                   title: "昵称",
                   child: Text(
-                    nicknameNotifier.currentNickname ?? '未设置', // 使用 ?? 提供默认值
+                    nicknameNotifier.currentNickname ?? '未设置',
                     style: const TextStyle(fontSize: 16),
                   ),
                   onTap: () {
@@ -157,7 +112,6 @@ class _AccountsecurityPageState extends State<AccountsecurityPage> {
                 );
               },
             ),
-
             const Divider(height: 1, color: Colors.grey),
           ],
         ),

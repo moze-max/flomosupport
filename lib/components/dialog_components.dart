@@ -78,6 +78,7 @@ Future<String?> showAddItemDialog(BuildContext context) async {
             onPressed: () {
               if (itemsInputController.text.isNotEmpty) {
                 result = itemsInputController.text.trim();
+                itemsInputController.dispose();
                 Navigator.pop(dialogContext, result);
               } else {
                 ScaffoldMessenger.of(dialogContext).showSnackBar(
