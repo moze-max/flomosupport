@@ -299,8 +299,6 @@ Future<String?> showAddItemDialog(BuildContext context) async {
   );
 }
 
-//---
-
 /// Shows a dialog for adding a new class item.
 Future<String?> showAddClassItemDialog(BuildContext context) async {
   return await showDialog<String>(

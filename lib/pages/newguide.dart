@@ -26,7 +26,6 @@ class NewguideState extends State<Newguide> {
   @override
   void initState() {
     super.initState();
-    // _initializeData();
   }
 
   Future<void> _pickImage() async {
@@ -104,7 +103,7 @@ class NewguideState extends State<Newguide> {
     currentTemplates.add(newTemplate);
     await StorageService.saveTemplates(currentTemplates);
 
-    // ⭐ 通知 ClassItemNotifier 刷新所有数据（包括模板）
+    // 通知 ClassItemNotifier 刷新所有数据（包括模板）
     if (!context.mounted) return;
     if (!mounted) return;
     final classItemNotifier =
@@ -122,6 +121,7 @@ class NewguideState extends State<Newguide> {
     final classItemNotifier =
         Provider.of<ClassItemNotifier>(context, listen: false);
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('新建模板'),
           centerTitle: true,
