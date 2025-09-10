@@ -14,11 +14,15 @@ import 'pages/guide.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  // 创建一个 NicknameNotifier 的实例
+  final nicknameNotifier = NicknameNotifier();
+  await nicknameNotifier.initLoad();
+  runApp(MyApp(nicknameNotifier: nicknameNotifier));
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  final NicknameNotifier nicknameNotifier;
+  MyApp({super.key, required this.nicknameNotifier});
   final GlobalKey<ScaffoldState> homepageScaffoldKey =
       GlobalKey<ScaffoldState>();
   @override
@@ -26,7 +30,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AvatarNotifier()),
-        ChangeNotifierProvider(create: (_) => NicknameNotifier()),
+        ChangeNotifierProvider.value(
+          value: nicknameNotifier,
+        ),
         ChangeNotifierProvider(create: (_) => ClassItemNotifier()),
       ],
       child: MaterialApp(

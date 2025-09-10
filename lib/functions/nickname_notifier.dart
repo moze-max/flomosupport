@@ -11,18 +11,26 @@ class NicknameNotifier extends ChangeNotifier {
 
   // 默认构造函数，负责在初始化时加载昵称。
   NicknameNotifier() {
-    _loadInitialNickname();
+    // _loadInitialNickname();
+  }
+
+  Future<void> initLoad() async {
+    _currentNickname = await StorageService.loadNickname();
+    if (_currentNickname == null || _currentNickname!.isEmpty) {
+      _currentNickname = '未设置昵称';
+    }
+    notifyListeners();
   }
 
   /// 从本地存储加载初始昵称。
   /// 如果没有找到昵称，则使用默认值。
-  Future<void> _loadInitialNickname() async {
-    _currentNickname = await StorageService.loadNickname();
-    if (_currentNickname == null || _currentNickname!.isEmpty) {
-      _currentNickname = '未设置昵称'; // 如果昵称为空，设置一个默认值
-    }
-    notifyListeners(); // 通知所有监听者初始昵称已加载
-  }
+  // Future<void> _loadInitialNickname() async {
+  //   _currentNickname = await StorageService.loadNickname();
+  //   if (_currentNickname == null || _currentNickname!.isEmpty) {
+  //     _currentNickname = '未设置昵称'; // 如果昵称为空，设置一个默认值
+  //   }
+  //   notifyListeners(); // 通知所有监听者初始昵称已加载
+  // }
 
   /// 更新并保存新的昵称。
   /// 这个方法将在昵称设置页面调用。
