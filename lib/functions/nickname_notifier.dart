@@ -1,6 +1,6 @@
 // lib/functions/nickname_notifier.dart
 import 'package:flutter/material.dart';
-import 'package:flomosupport/functions/storage_service.dart'; // 导入 StorageService
+import 'package:flomosupport/functions/storage_service.dart';
 
 /// 一个用于管理用户昵称状态的 Change Notifier。
 /// 它负责加载、保存和通知 UI 昵称的变更。

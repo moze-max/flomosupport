@@ -16,8 +16,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final avatarRadius = screenWidth * 0.12;
     final drawerHeaderHeight = avatarRadius * 2 + 64.0;
-    final String? currentnickname =
-        Provider.of<NicknameNotifier>(context, listen: false).currentNickname;
+    final String currentnickname =
+        Provider.of<NicknameNotifier>(context, listen: true).currentNickname ??
+            'none';
     EdgeInsets.zero;
     return ListTileTheme(
       selectedTileColor: Colors.blueAccent.withAlpha(128),
@@ -42,7 +43,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     const SizedBox(width: 30),
                     Expanded(
                       child: Text(
-                        currentnickname as String,
+                        currentnickname,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
