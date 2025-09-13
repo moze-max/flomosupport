@@ -57,48 +57,48 @@ class _UserAccountPageState extends State<UserAccountPage> {
               ),
             ),
           ),
-          ListTile(
-            leading: Icon(Icons.home, color: Colors.white70),
-            title: Text(
-              'Home',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle, color: Colors.white70),
-            title: Text(
-              'My Profile',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              // Navigate to My Profile page
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.settings, color: Colors.white70),
-            title: Text(
-              'Settings',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, '/article');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.logout, color: Colors.white70),
-            title: Text(
-              'Logout',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              // Logout logic here
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.home, color: Colors.white70),
+          //   title: Text(
+          //     'Home',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(Icons.account_circle, color: Colors.white70),
+          //   title: Text(
+          //     'My Profile',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     // Navigate to My Profile page
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(Icons.settings, color: Colors.white70),
+          //   title: Text(
+          //     'Settings',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pushNamed(context, '/article');
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(Icons.logout, color: Colors.white70),
+          //   title: Text(
+          //     'Logout',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     // Logout logic here
+          //   },
+          // ),
         ],
       ),
     );

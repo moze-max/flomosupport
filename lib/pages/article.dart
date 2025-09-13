@@ -107,24 +107,24 @@ class _ArticleState extends State<Article> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: appLocalizations.searchHint,
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-              ),
-              onChanged: (value) {
-                // 搜索逻辑
-              },
-            ),
-          ),
+          // Padding(
+          //   padding:
+          //       const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 16.0),
+          //   child: TextField(
+          //     decoration: InputDecoration(
+          //       hintText: appLocalizations.searchHint,
+          //       prefixIcon: const Icon(Icons.search),
+          //       border: OutlineInputBorder(
+          //         borderRadius: BorderRadius.circular(8.0),
+          //         borderSide: BorderSide.none,
+          //       ),
+          //       contentPadding: const EdgeInsets.symmetric(vertical: 0),
+          //     ),
+          //     onChanged: (value) {
+          //       // 搜索逻辑
+          //     },
+          //   ),
+          // ),
           Expanded(
             child: ListView(
               key: const Key('mainSettingsScrollView'),
