@@ -7,6 +7,7 @@ import 'package:flomosupport/pages/article/about.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
 import 'package:flomosupport/pages/homepage.dart';
 import 'package:flomosupport/l10n/app_localizations.dart';
+import 'package:flomosupport/theme/theme_menager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'pages/article.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           value: nicknameNotifier,
         ),
         ChangeNotifierProvider(create: (_) => ClassItemNotifier()),
+        ChangeNotifierProvider(create: (_) => ThemeMenager())
       ],
       child: MaterialApp(
         routes: {
