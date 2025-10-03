@@ -40,6 +40,9 @@ class _NicknameSettingPageState extends State<NicknameSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Color appBarForegroundColor =
+        Theme.of(context).appBarTheme.foregroundColor ??
+            Theme.of(context).colorScheme.onPrimary;
     return Scaffold(
       appBar: AppBar(
         title: const Text('更改名字'),
@@ -58,7 +61,10 @@ class _NicknameSettingPageState extends State<NicknameSettingPage> {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('保存', style: TextStyle(color: Colors.blue)),
+            style: TextButton.styleFrom(
+              foregroundColor: appBarForegroundColor,
+            ),
+            child: const Text('保存'),
           ),
         ],
       ),
