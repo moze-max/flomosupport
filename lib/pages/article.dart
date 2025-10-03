@@ -2,6 +2,7 @@ import 'package:flomosupport/components/settings_list_item.dart';
 import 'package:flomosupport/components/settings_section_header.dart';
 import 'package:flomosupport/pages/article/APIkey.dart';
 import 'package:flomosupport/pages/article/GeneralSettings.dart';
+import 'package:flomosupport/pages/article/Theme_Setting_Page.dart';
 import 'package:flomosupport/pages/article/notificationsetting.dart';
 import 'package:flomosupport/pages/article/AccountSecurity.dart';
 import 'package:flomosupport/pages/article/privacy/info.dart';
@@ -163,9 +164,13 @@ class _ArticleState extends State<Article> {
                   key: const Key('modeSelectionItem'),
                   icon: Icons.color_lens_outlined,
                   title: appLocalizations.modeSelection,
-                  trailing: Text(appLocalizations.normalMode),
                   onTap: () {
                     // 导航到模式选择设置
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ThemeSettingPage()),
+                    );
                   },
                 ),
                 SettingsListItem(

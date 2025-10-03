@@ -49,13 +49,12 @@ class HomePageState extends State<Homepage> {
       drawerScrimColor: Colors.black54,
       drawer: Drawer(
         width: dynamicDrawerWidth,
-        backgroundColor:
-            const Color.fromARGB(255, 185, 211, 228).withAlpha(255),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         child: const UserAccountPage(),
       ),
       body: IndexedStack(index: currentindex, children: _pages),
       bottomNavigationBar: Theme(
-        data: ThemeData(splashColor: Colors.transparent),
+        data: Theme.of(context).copyWith(splashColor: Colors.transparent),
         child: BottomNavigationBar(
           currentIndex: currentindex,
           selectedFontSize: 14,

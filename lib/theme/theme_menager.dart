@@ -31,4 +31,11 @@ class ThemeManager extends ChangeNotifier {
             ? ThemeMode.system
             : ThemeMode.light;
   }
+
+  void setThemeMode(ThemeMode mode) {
+    if (_themeMode != mode) {
+      _themeMode = mode;
+      notifyListeners();
+    }
+  }
 }
