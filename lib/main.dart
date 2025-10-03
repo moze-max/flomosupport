@@ -16,15 +16,21 @@ import 'pages/guide.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 加载theme保存值
+  final themeManager = ThemeManager();
+  await themeManager.loadThemeMode();
   // 创建一个 NicknameNotifier 的实例
   final nicknameNotifier = NicknameNotifier();
   await nicknameNotifier.initLoad();
-  runApp(MyApp(nicknameNotifier: nicknameNotifier));
+  runApp(MyApp(
+    nicknameNotifier: nicknameNotifier,
+    themeManager: themeManager,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final NicknameNotifier nicknameNotifier;
-  MyApp({super.key, required this.nicknameNotifier});
+  MyApp({super.key, required this.nicknameNotifier, required themeManager});
   final GlobalKey<ScaffoldState> homepageScaffoldKey =
       GlobalKey<ScaffoldState>();
   @override
