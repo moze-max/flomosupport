@@ -30,9 +30,12 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final NicknameNotifier nicknameNotifier;
-  MyApp({super.key, required this.nicknameNotifier, required themeManager});
+  final ThemeManager themeManager;
+  MyApp(
+      {super.key, required this.nicknameNotifier, required this.themeManager});
   final GlobalKey<ScaffoldState> homepageScaffoldKey =
       GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -42,7 +45,9 @@ class MyApp extends StatelessWidget {
           value: nicknameNotifier,
         ),
         ChangeNotifierProvider(create: (_) => ClassItemNotifier()),
-        ChangeNotifierProvider(create: (_) => ThemeManager())
+        ChangeNotifierProvider.value(
+          value: themeManager,
+        ),
       ],
       child: Consumer<ThemeManager>(builder: (context, themeManager, child) {
         return MaterialApp(
@@ -62,10 +67,6 @@ class MyApp extends StatelessWidget {
           title: AppLocalizations.of(context)?.appTitle ?? 'Flomo Support',
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          // theme: ThemeData(
-          //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          //   fontFamily: 'NotoSansSC',
-          // ),
           theme:
               lightTheme, // 假设 lightTheme 是从你的 theme_data.dart 导入的 ThemeData 实例
           darkTheme: darkTheme,
