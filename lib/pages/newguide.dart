@@ -132,9 +132,6 @@ class NewguideState extends State<Newguide> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                // 注意：如果使用Spacer，可能需要重新评估SingleChildScrollView
-                // 如果屏幕高度足够，Spacer会拉伸，body内容可能不会滚动
-                // 如果屏幕高度不足，SingleChildScrollView仍会提供滚动
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: LayoutBuilder(
